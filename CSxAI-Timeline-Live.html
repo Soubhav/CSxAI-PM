@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSxAI — Live Project Tracker</title>
+    <style>
+        :root {
+            --bg: #0d0f1a; --card: #151829; --card-hover: #1a1e35; --surface: #1e2240;
+            --border: rgba(255,255,255,0.08); --text: #e2e8f0; --text-muted: #8892b0;
+            --primary: #7c5cfc; --primary-light: #9b7fff;
+            --emerald: #34d399; --emerald-bg: rgba(52,211,153,0.1); --emerald-border: rgba(52,211,153,0.25);
+            --amber: #fbbf24; --amber-bg: rgba(251,191,36,0.1); --amber-border: rgba(251,191,36,0.25);
+            --red: #f87171; --red-bg: rgba(248,113,113,0.1); --red-border: rgba(248,113,113,0.25);
+            --blue: #60a5fa; --blue-bg: rgba(96,165,250,0.1);
+            --slate: #64748b; --slate-bg: rgba(100,116,139,0.1); --slate-border: rgba(100,116,139,0.25);
+            --teal: #2dd4bf; --teal-bg: rgba(45,212,191,0.1);
+            --violet: #a78bfa; --violet-bg: rgba(167,139,250,0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+
+        /* Header */
+        .header { background: linear-gradient(135deg, #1a1040 0%, #0d0f1a 50%, #0a1628 100%); border-bottom: 1px solid var(--border); padding: 36px 0 28px; }
+        .header-inner { max-width: 1400px; margin: 0 auto; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .logo-text { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .logo-text span { color: var(--primary-light); }
+        .header-title { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .live-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--emerald-bg); border: 1px solid var(--emerald-border); color: var(--emerald); border-radius: 100px; padding: 6px 14px; font-size: 12px; font-weight: 600; }
+        .live-dot { width: 7px; height: 7px; background: var(--emerald); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .voice-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--violet-bg); border: 1px solid rgba(167,139,250,0.25); color: var(--violet); border-radius: 100px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .voice-btn:hover { background: rgba(167,139,250,0.2); }
+
+        /* Top Stats */
+        .stats-section { max-width: 1400px; margin: 24px auto 0; padding: 0 32px; }
+        .stats-row { display: grid; grid-template-columns: 280px 1fr; gap: 24px; }
+        .donut-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; align-items: center; }
+        .donut-card h3 { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .donut-container { position: relative; width: 160px; height: 160px; }
+        .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+        .donut-pct { font-size: 36px; font-weight: 700; letter-spacing: -1px; }
+        .donut-label { font-size: 12px; color: var(--text-muted); }
+        .donut-legend { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* Metrics Cards */
+        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-content: start; }
+        .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+        .metric-value { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+        .metric-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .metric-bar { height: 4px; background: var(--surface); border-radius: 100px; margin-top: 10px; overflow: hidden; }
+        .metric-bar-fill { height: 100%; border-radius: 100px; transition: width 0.6s; }
+
+        /* Track Progress Cards */
+        .track-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        .track-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; }
+        .track-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .track-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .track-card-header h4 { font-size: 13px; font-weight: 600; }
+        .track-card-header span { font-size: 13px; color: var(--text-muted); margin-left: auto; }
+        .mini-bar { height: 6px; background: var(--surface); border-radius: 100px; overflow: hidden; }
+        .mini-bar-fill { height: 100%; border-radius: 100px; transition: width 0.6s; }
+
+        /* Day View */
+        .main { max-width: 1400px; margin: 28px auto 0; padding: 0 32px 64px; }
+        .view-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .section-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .filter-pills { display: flex; gap: 8px; }
+        .filter-pill { padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); transition: all 0.2s; }
+        .filter-pill:hover { border-color: var(--primary); color: var(--text); }
+        .filter-pill.active { background: rgba(124,92,252,0.15); border-color: var(--primary); color: var(--primary-light); }
+
+        /* Day Row */
+        .day-group { margin-bottom: 4px; }
+        .day-header {
+            display: grid; grid-template-columns: 80px 1fr; gap: 0;
+            position: sticky; top: 0; z-index: 10; background: var(--bg); padding: 8px 0;
+        }
+        .day-badge { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; }
+        .day-num { font-size: 22px; font-weight: 700; line-height: 1; }
+        .day-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .day-badge.completed .day-num { color: var(--emerald); }
+        .day-badge.current .day-num { color: var(--primary-light); }
+        .day-badge.pending .day-num { color: var(--text-muted); }
+        .day-line { display: flex; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .day-line-week { font-size: 11px; color: var(--text-muted); background: var(--surface); padding: 2px 10px; border-radius: 4px; }
+        .day-line-theme { font-size: 13px; color: var(--text-muted); }
+
+        /* Task Cards */
+        .day-tasks { display: grid; grid-template-columns: 80px 1fr; gap: 0; }
+        .day-connector { display: flex; flex-direction: column; align-items: center; }
+        .connector-line { width: 2px; flex: 1; background: var(--border); }
+        .day-connector.completed .connector-line { background: var(--emerald); opacity: 0.3; }
+        .day-connector.current .connector-line { background: var(--primary); opacity: 0.3; }
+        .tasks-column { display: flex; flex-direction: column; gap: 8px; padding: 4px 0 16px; }
+
+        .task-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+            cursor: pointer; transition: all 0.2s; user-select: none;
+        }
+        .task-card:hover { background: var(--card-hover); border-color: rgba(255,255,255,0.12); }
+        .task-card.completed { border-left: 3px solid var(--emerald); }
+        .task-card.in-progress { border-left: 3px solid var(--amber); }
+        .task-card.backlog { border-left: 3px solid var(--red); opacity: 0.7; }
+        .task-card.pending { border-left: 3px solid transparent; }
+
+        .task-track-badge {
+            padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+        }
+        .task-track-badge.a { background: var(--teal-bg); color: var(--teal); }
+        .task-track-badge.b { background: var(--violet-bg); color: var(--violet); }
+
+        .task-info { flex: 1; min-width: 0; }
+        .task-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .task-detail { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Inline Editing */
+        .editable { cursor: text; border-radius: 4px; padding: 1px 4px; margin: -1px -4px; transition: all 0.15s; position: relative; }
+        .editable:hover { background: rgba(124,92,252,0.08); outline: 1px dashed rgba(124,92,252,0.3); }
+        .editable:focus { background: var(--surface); outline: 2px solid var(--primary); color: var(--text); white-space: normal; overflow: visible; text-overflow: unset; }
+        .editable[data-placeholder]:empty::before { content: attr(data-placeholder); color: var(--text-muted); opacity: 0.5; }
+        .edit-hint { position: absolute; top: -18px; right: 0; font-size: 9px; color: var(--primary-light); opacity: 0; pointer-events: none; transition: opacity 0.15s; background: var(--card); padding: 1px 6px; border-radius: 3px; }
+        .editable:hover .edit-hint { opacity: 0.7; }
+
+        .task-status-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 14px; border-radius: 100px; font-size: 11px; font-weight: 600;
+            cursor: pointer; transition: all 0.15s; border: 1px solid transparent; flex-shrink: 0;
+        }
+        .task-status-btn.completed { background: var(--emerald-bg); color: var(--emerald); border-color: var(--emerald-border); }
+        .task-status-btn.in-progress { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+        .task-status-btn.pending { background: var(--slate-bg); color: var(--slate); border-color: var(--slate-border); }
+        .task-status-btn.backlog { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+        .task-status-btn:hover { filter: brightness(1.2); transform: scale(1.05); }
+        .status-icon { font-size: 12px; }
+
+        /* Demo Milestone */
+        .demo-card {
+            background: rgba(124,92,252,0.06); border: 1px solid rgba(124,92,252,0.2); border-radius: 12px;
+            padding: 14px 18px; display: flex; align-items: center; gap: 14px;
+        }
+        .demo-badge { background: rgba(124,92,252,0.15); color: var(--primary-light); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+        .demo-text { font-size: 13px; color: var(--text-muted); flex: 1; }
+        .demo-status-btn { cursor: pointer; }
+
+        /* Milestone Stepper */
+        .milestone-section { max-width: 1400px; margin: 20px auto 0; padding: 0 32px; }
+        .milestone-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 28px; }
+        .milestone-card h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .milestone-track { display: flex; align-items: center; gap: 0; position: relative; }
+        .milestone-step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; }
+        .milestone-dot { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; border: 2px solid var(--border); background: var(--surface); transition: all 0.3s; }
+        .milestone-dot.done { background: var(--emerald); border-color: var(--emerald); color: #000; }
+        .milestone-dot.active { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); box-shadow: 0 0 12px rgba(251,191,36,0.3); }
+        .milestone-dot.upcoming { opacity: 0.5; }
+        .milestone-label { font-size: 11px; font-weight: 600; margin-top: 8px; text-align: center; white-space: nowrap; }
+        .milestone-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .milestone-connector { flex: 1; height: 3px; background: var(--surface); min-width: 20px; margin: 0 -4px; position: relative; z-index: 1; margin-bottom: 28px; }
+        .milestone-connector.done { background: var(--emerald); }
+        .milestone-connector.partial { background: linear-gradient(90deg, var(--emerald), var(--surface)); }
+        .milestone-countdown { display: flex; align-items: center; gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+        .countdown-badge { background: rgba(124,92,252,0.12); color: var(--primary-light); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; }
+        .countdown-text { font-size: 12px; color: var(--text-muted); }
+
+        /* Risk Alerts */
+        .risk-section { max-width: 1400px; margin: 16px auto 0; padding: 0 32px; }
+        .risk-alert {
+            background: var(--red-bg); border: 1px solid rgba(248,113,113,0.2); border-radius: 12px;
+            padding: 14px 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+        }
+        .risk-icon { font-size: 18px; flex-shrink: 0; }
+        .risk-content { flex: 1; }
+        .risk-content h4 { font-size: 13px; font-weight: 600; color: var(--red); }
+        .risk-content p { font-size: 12px; color: var(--text-muted); }
+        .risk-impact { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.25); white-space: nowrap; }
+
+        /* Progress Chart */
+        .progress-chart-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; margin-top: 12px; }
+        .progress-chart-card h3 { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .progress-chart-row { display: flex; align-items: center; gap: 20px; }
+        .progress-canvas-wrap { flex: 1; position: relative; }
+        .progress-eta { display: flex; flex-direction: column; gap: 8px; min-width: 160px; }
+        .eta-card { background: var(--surface); border-radius: 10px; padding: 12px 16px; text-align: center; }
+        .eta-card .eta-value { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .eta-card .eta-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .chart-legend { display: flex; gap: 16px; margin-top: 10px; }
+        .chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+        .chart-legend-line { width: 20px; height: 3px; border-radius: 2px; }
+
+        /* Weekly Digest */
+        .digest-section { margin-bottom: 20px; }
+        .digest-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .digest-header { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); cursor: pointer; }
+        .digest-header h3 { font-size: 14px; font-weight: 700; flex: 1; }
+        .digest-header .digest-toggle { font-size: 16px; color: var(--text-muted); transition: transform 0.2s; }
+        .digest-header .digest-toggle.open { transform: rotate(180deg); }
+        .digest-body { padding: 16px 20px; }
+        .digest-week { padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .digest-week:last-child { border-bottom: none; }
+        .digest-week-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .digest-week-badge { padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+        .digest-week-badge.current { background: rgba(124,92,252,0.15); color: var(--primary-light); }
+        .digest-week-badge.past { background: var(--emerald-bg); color: var(--emerald); }
+        .digest-week-badge.future { background: var(--slate-bg); color: var(--slate); }
+        .digest-week-title { font-size: 13px; font-weight: 600; }
+        .digest-week-stats { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+        .digest-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+        .digest-text strong { color: var(--text); }
+        .digest-highlights { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .digest-tag { padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; background: var(--surface); color: var(--text-muted); border: 1px solid var(--border); }
+
+        /* PM Summary Panel */
+        .summary-section { max-width: 1400px; margin: 24px auto 0; padding: 0 32px; }
+        .summary-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .summary-header { display: flex; align-items: center; gap: 14px; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .summary-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--violet)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .summary-header-text { flex: 1; }
+        .summary-header-text h3 { font-size: 14px; font-weight: 700; }
+        .summary-header-text p { font-size: 12px; color: var(--text-muted); }
+        .summary-health { padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .summary-health.green { background: var(--emerald-bg); color: var(--emerald); border: 1px solid var(--emerald-border); }
+        .summary-health.yellow { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+        .summary-health.red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+        .summary-health.gray { background: var(--slate-bg); color: var(--slate); border: 1px solid var(--slate-border); }
+        .summary-body { padding: 20px 24px; }
+        .summary-narrative { font-size: 14px; line-height: 1.7; color: var(--text); margin-bottom: 20px; }
+        .summary-narrative strong { color: var(--primary-light); }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .summary-block { background: var(--surface); border-radius: 10px; padding: 14px 16px; }
+        .summary-block h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .summary-block ul { list-style: none; }
+        .summary-block li { font-size: 12px; color: var(--text-muted); padding: 3px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .summary-block li::before { content: "→ "; color: var(--text-muted); }
+        .summary-footer { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-top: 1px solid var(--border); }
+        .summary-timestamp { font-size: 11px; color: var(--text-muted); }
+        .summary-regen { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+        .summary-regen:hover { color: var(--text); border-color: var(--primary); }
+        @media (max-width: 900px) { .summary-grid { grid-template-columns: repeat(2, 1fr); } .summary-section { padding: 0 16px; } }
+
+        /* Updates Panel */
+        .updates-section { margin-bottom: 28px; }
+        .updates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+        .update-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 18px; display: flex; gap: 12px;
+        }
+        .update-type { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; height: fit-content; margin-top: 2px; }
+        .update-type.milestone { background: var(--emerald-bg); color: var(--emerald); }
+        .update-type.blocker { background: var(--red-bg); color: var(--red); }
+        .update-type.update { background: var(--blue-bg); color: var(--blue); }
+        .update-type.note { background: var(--violet-bg); color: var(--violet); }
+        .update-content h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+        .update-content p { font-size: 12px; color: var(--text-muted); }
+        .update-date { font-size: 11px; color: var(--text-muted); margin-left: auto; white-space: nowrap; }
+
+        /* Voice Agent Modal */
+        .voice-modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000;
+            align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+        .voice-modal-overlay.active { display: flex; }
+        .voice-modal {
+            background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 40px; width: 420px; text-align: center;
+        }
+        .voice-avatar {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--violet));
+            display: flex; align-items: center; justify-content: center; font-size: 36px;
+            margin: 0 auto 20px; animation: voicePulse 3s ease-in-out infinite;
+        }
+        @keyframes voicePulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(124,92,252,0.3); }
+            50% { box-shadow: 0 0 0 20px rgba(124,92,252,0); }
+        }
+        .voice-modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .voice-modal p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+        .voice-modal .coming-soon { background: var(--amber-bg); color: var(--amber); padding: 8px 20px; border-radius: 100px; font-size: 13px; font-weight: 600; display: inline-block; margin-bottom: 16px; }
+        .voice-features { text-align: left; margin: 20px 0; }
+        .voice-feature { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; color: var(--text-muted); }
+        .voice-feature .check { color: var(--emerald); }
+        .voice-close { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px 24px; border-radius: 10px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .voice-close:hover { background: var(--card-hover); }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; background: var(--card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px 20px; font-size: 13px; z-index: 900;
+            display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0;
+            transition: all 0.3s; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        /* Footer */
+        .footer { max-width: 1400px; margin: 0 auto; padding: 24px 32px; border-top: 1px solid var(--border); text-align: center; }
+        .footer p { font-size: 12px; color: var(--text-muted); }
+
+        @media (max-width: 900px) {
+            .stats-row { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .track-cards { grid-template-columns: 1fr; }
+            .header-inner { flex-direction: column; gap: 16px; text-align: center; }
+            .header-right { justify-content: center; }
+            .day-header, .day-tasks { grid-template-columns: 50px 1fr; }
+            .updates-grid { grid-template-columns: 1fr; }
+            .milestone-section, .risk-section { padding: 0 16px; }
+            .milestone-track { flex-wrap: wrap; gap: 4px; }
+            .milestone-connector { display: none; }
+            .milestone-step { min-width: 60px; }
+            .progress-chart-row { flex-direction: column; }
+            .progress-eta { flex-direction: row; width: 100%; }
+            .eta-card { flex: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-inner">
+        <div class="header-left">
+            <div class="logo-icon">🎧</div>
+            <div>
+                <div class="logo-text">CS<span>x</span>AI</div>
+                <div class="header-title">Live Project Tracker — Lakeside Credit Union</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="live-badge"><div class="live-dot"></div> Live</div>
+            <div class="voice-btn" onclick="openVoiceModal()">🎙️ Voice Agent</div>
+        </div>
+    </div>
+</div>
+
+<!-- Milestone Stepper -->
+<div class="milestone-section" id="milestoneSection"></div>
+
+<!-- Risk Alerts -->
+<div class="risk-section" id="riskSection"></div>
+
+<!-- Stats Section -->
+<div class="stats-section">
+    <div class="stats-row">
+        <div class="donut-card">
+            <h3>Overall Completion</h3>
+            <div class="donut-container"><canvas id="donutChart" width="160" height="160"></canvas>
+                <div class="donut-center"><div class="donut-pct" id="donutPct">0%</div><div class="donut-label">Complete</div></div>
+            </div>
+            <div class="donut-legend" id="donutLegend"></div>
+        </div>
+        <div>
+            <div class="metrics-grid" id="metricsGrid"></div>
+            <div class="track-cards" id="trackCards"></div>
+        </div>
+    </div>
+    <!-- Progress Chart + ETA -->
+    <div class="progress-chart-card" id="progressChartCard">
+        <h3>Expected vs Actual Progress</h3>
+        <div class="progress-chart-row">
+            <div class="progress-canvas-wrap"><canvas id="progressChart" width="800" height="200"></canvas></div>
+            <div class="progress-eta" id="progressEta"></div>
+        </div>
+        <div class="chart-legend">
+            <div class="chart-legend-item"><div class="chart-legend-line" style="background:rgba(100,116,139,0.5);border:1px dashed var(--slate);height:0;border-top-width:2px;"></div> Expected</div>
+            <div class="chart-legend-item"><div class="chart-legend-line" style="background:var(--emerald);"></div> Actual</div>
+            <div class="chart-legend-item"><div class="chart-legend-line" style="background:var(--primary);"></div> Projected</div>
+        </div>
+    </div>
+</div>
+
+<!-- PM Summary -->
+<div class="summary-section" id="summarySection"></div>
+
+<!-- Main Content -->
+<div class="main">
+    <!-- Weekly Digest -->
+    <div class="digest-section" id="digestSection"></div>
+
+    <!-- Updates -->
+    <div class="updates-section">
+        <div class="view-controls">
+            <div class="section-title">📢 Updates</div>
+        </div>
+        <div class="updates-grid" id="updatesList"></div>
+    </div>
+
+    <!-- Day View -->
+    <div class="view-controls">
+        <div class="section-title">📅 Day-by-Day Timeline</div>
+        <div class="filter-pills">
+            <div class="filter-pill active" data-filter="all" onclick="setFilter('all')">All</div>
+            <div class="filter-pill" data-filter="track-a" onclick="setFilter('track-a')">Track A</div>
+            <div class="filter-pill" data-filter="track-b" onclick="setFilter('track-b')">Track B</div>
+            <div class="filter-pill" data-filter="completed" onclick="setFilter('completed')">✓ Done</div>
+            <div class="filter-pill" data-filter="in-progress" onclick="setFilter('in-progress')">● In Progress</div>
+            <div class="filter-pill" data-filter="backlog" onclick="setFilter('backlog')">⚠ Backlog</div>
+        </div>
+    </div>
+    <div id="daysContainer"></div>
+</div>
+
+<!-- Voice Agent Modal -->
+<div class="voice-modal-overlay" id="voiceModal">
+    <div class="voice-modal">
+        <div class="voice-avatar">🎙️</div>
+        <div class="coming-soon">Coming Soon</div>
+        <h2>CSxAI Voice Agent</h2>
+        <p>Call in to get a live project status update, ask questions, and provide feedback.</p>
+        <div class="voice-features">
+            <div class="voice-feature"><span class="check">✓</span> Real-time project status via voice</div>
+            <div class="voice-feature"><span class="check">✓</span> Ask "what was completed this week?"</div>
+            <div class="voice-feature"><span class="check">✓</span> Ask "are there any blockers?"</div>
+            <div class="voice-feature"><span class="check">✓</span> Post-call CSAT survey (1-5 rating)</div>
+            <div class="voice-feature"><span class="check">✓</span> Auto-generated call summary to email</div>
+            <div class="voice-feature"><span class="check">✓</span> Escalate to project lead if needed</div>
+        </div>
+        <button class="voice-close" onclick="closeVoiceModal()">Close</button>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<div class="footer">
+    <p>CSxAI Project Tracker &middot; Last updated: <span id="lastUpdated" style="color:var(--primary-light);font-weight:500;"></span></p>
+    <p style="margin-top:4px;">Built for Lakeside Credit Union &middot; Confidential</p>
+</div>
+
+<script>
+// ============================================================
+// 🔧 PROJECT CONFIG — Edit this to update project status
+// Task statuses: "completed" | "in-progress" | "pending" | "backlog"
+// ============================================================
+const PROJECT = {
+    startDate: "2026-03-16",
+    currentDay: 0,
+    lastUpdated: "2026-03-13",
+
+    updates: [
+        { type: "note", title: "Project kickoff scheduled", description: "25-day build starts March 16. Team of 2-3 engineers confirmed.", date: "Mar 13" },
+        { type: "milestone", title: "Phase 1 scope locked", description: "11 core features + 10 Agent Assist features. Giga.ml-inspired dark design.", date: "Mar 12" },
+        { type: "update", title: "Frontend scaffold ready", description: "Next.js 16 + Tailwind v4 + shadcn/ui initialized. Sidebar navigation working.", date: "Mar 12" },
+    ],
+
+    days: [
+        // ══════════════════════════════════════════════════════════
+        // WEEK 1: Infrastructure & Cloud Setup
+        // Client Focus: "Can we connect to all the services we need?"
+        // Linear: CSX-74, CSX-86, CSX-85, CSX-84, CSX-68, CSX-70, CSX-73, CSX-72, CSX-88
+        // ══════════════════════════════════════════════════════════
+        { day: 1, week: 1, weekTitle: "Infrastructure & Cloud Setup", clientFocus: "Service connectivity & cloud readiness", tasks: [
+            { id: "1a1", track: "a", name: "Setup AWS Cloud Access", detail: "CSX-74 · AWS account provisioning, IAM roles, VPC config, security groups", status: "pending" },
+            { id: "1b1", track: "b", name: "Provision Cartesia Account", detail: "CSX-86 · Cartesia voice synthesis account, API credentials, rate limits", status: "pending" },
+        ]},
+        { day: 2, week: 1, weekTitle: "Infrastructure & Cloud Setup", clientFocus: "Service connectivity & cloud readiness", tasks: [
+            { id: "1a2", track: "a", name: "Provision ChatGPT API Key", detail: "CSX-85 · OpenAI account setup, API key rotation, usage monitoring", status: "pending" },
+            { id: "1b2", track: "b", name: "Provision Deepgram Account", detail: "CSX-84 · Deepgram STT account, streaming API access, model selection", status: "pending" },
+        ]},
+        { day: 3, week: 1, weekTitle: "Infrastructure & Cloud Setup", clientFocus: "Service connectivity & cloud readiness", tasks: [
+            { id: "1a3", track: "a", name: "Connect Twilio Services", detail: "CSX-68 · Twilio Voice SDK, phone number provisioning, webhook config", status: "pending" },
+            { id: "1b3", track: "b", name: "Connect LiveKit", detail: "CSX-70 · LiveKit server setup, room management, WebRTC transport", status: "pending" },
+        ]},
+        { day: 4, week: 1, weekTitle: "Infrastructure & Cloud Setup", clientFocus: "Service connectivity & cloud readiness", tasks: [
+            { id: "1a4", track: "a", name: "Connect Cartesia for Text-to-Speech", detail: "CSX-73 · TTS pipeline integration, voice cloning config, latency testing", status: "pending" },
+            { id: "1b4", track: "b", name: "Connect OpenAI for Agent Responses", detail: "CSX-72 · LLM response pipeline, prompt routing, fallback handling", status: "pending" },
+        ]},
+        { day: 5, week: 1, weekTitle: "Infrastructure & Cloud Setup", clientFocus: "Service connectivity & cloud readiness", tasks: [
+            { id: "1a5", track: "a", name: "Provision Groq API Key", detail: "CSX-88 · Groq inference setup, low-latency model access, key management", status: "pending" },
+            { id: "1b5", track: "b", name: "Infrastructure Integration Testing", detail: "End-to-end service connectivity validation, health checks, monitoring", status: "pending" },
+        ], demo: { label: "DEMO 1", text: "All cloud services provisioned + third-party integrations verified" }},
+
+        // ══════════════════════════════════════════════════════════
+        // WEEK 2: Dashboard & Agent Configuration
+        // Client Focus: "Can we see metrics and configure our AI agents?"
+        // Linear: CSX-37, CSX-39, CSX-40, CSX-38, CSX-78, CSX-64, CSX-43, CSX-45, CSX-44, CSX-106
+        // ══════════════════════════════════════════════════════════
+        { day: 6, week: 2, weekTitle: "Dashboard & Agent Configuration", clientFocus: "Operational visibility & agent control", tasks: [
+            { id: "2a1", track: "a", name: "Build Main Dashboard Page", detail: "CSX-37 · KPI cards, time greeting, filter pills, workspace layout (0/3 subtasks)", status: "pending" },
+            { id: "2b1", track: "b", name: "Build Master Agent (Call Router)", detail: "CSX-64 · Intelligent call routing, scenario matching, priority handling", status: "pending" },
+        ]},
+        { day: 7, week: 2, weekTitle: "Dashboard & Agent Configuration", clientFocus: "Operational visibility & agent control", tasks: [
+            { id: "2a2", track: "a", name: "AHT & FCR Metrics", detail: "CSX-39 · Average Handle Time + First Call Resolution tracking, trend charts", status: "pending" },
+            { id: "2b2", track: "b", name: "Build Scenarios List Page", detail: "CSX-43 · Scenario table view, status badges, search, creation flow", status: "pending" },
+        ]},
+        { day: 8, week: 2, weekTitle: "Dashboard & Agent Configuration", clientFocus: "Operational visibility & agent control", tasks: [
+            { id: "2a3", track: "a", name: "NPS Metric + Calls Heatmap", detail: "CSX-40 + CSX-38 · Net Promoter Score gauge, calls by day/hour heatmap grid", status: "pending" },
+            { id: "2b3", track: "b", name: "Add Scenario Detail / Settings Page", detail: "CSX-45 · Per-scenario config, system prompt editor, escalation rules", status: "pending" },
+        ]},
+        { day: 9, week: 2, weekTitle: "Dashboard & Agent Configuration", clientFocus: "Operational visibility & agent control", tasks: [
+            { id: "2a4", track: "a", name: "Build API for Dashboard Metrics", detail: "CSX-78 · Metrics aggregation API, call logging data pipeline, real-time feeds", status: "pending" },
+            { id: "2b4", track: "b", name: "Add Guardrails Tab to Scenario", detail: "CSX-44 · Safety rules, prohibited actions, tone constraints, compliance checks", status: "pending" },
+        ]},
+        { day: 10, week: 2, weekTitle: "Dashboard & Agent Configuration", clientFocus: "Operational visibility & agent control", tasks: [
+            { id: "2a5", track: "a", name: "Modular Tool Framework", detail: "CSX-106 · Plugin architecture for agent tools, dynamic tool toggling", status: "pending" },
+            { id: "2b5", track: "b", name: "Dynamic Tool Toggling for Agents", detail: "CSX-106 · Per-scenario tool assignment, enable/disable, tool config UI", status: "pending" },
+        ], demo: { label: "DEMO 2", text: "Dashboard with live metrics + Agent Canvas with scenarios & guardrails" }},
+
+        // ══════════════════════════════════════════════════════════
+        // WEEK 3: Knowledge Base & Scenario Testing
+        // Client Focus: "Can our agents access documents and be tested safely?"
+        // Linear: CSX-50, CSX-79, CSX-101, CSX-52, CSX-99, CSX-75, CSX-53, CSX-54, CSX-49, CSX-87
+        // ══════════════════════════════════════════════════════════
+        { day: 11, week: 3, weekTitle: "Knowledge Base & Scenario Testing", clientFocus: "Agent intelligence & quality assurance", tasks: [
+            { id: "3a1", track: "a", name: "Workspace Knowledge Base", detail: "CSX-50 · KB workspace setup, folder structure, access controls, metadata", status: "pending" },
+            { id: "3b1", track: "b", name: "Build KB Document Processing", detail: "CSX-79 · Document ingestion pipeline, chunking, embedding generation", status: "pending" },
+        ]},
+        { day: 12, week: 3, weekTitle: "Knowledge Base & Scenario Testing", clientFocus: "Agent intelligence & quality assurance", tasks: [
+            { id: "3a2", track: "a", name: "Build KB Document Upload", detail: "CSX-101 · Drag-and-drop upload, file validation, progress tracking, versioning", status: "pending" },
+            { id: "3b2", track: "b", name: "Show List of Uploaded KB Files", detail: "CSX-52 · File browser, metadata display, status indicators, bulk actions", status: "pending" },
+        ]},
+        { day: 13, week: 3, weekTitle: "Knowledge Base & Scenario Testing", clientFocus: "Agent intelligence & quality assurance", tasks: [
+            { id: "3a3", track: "a", name: "Knowledge Base Search for Reps", detail: "CSX-99 · Rep-facing search UI, semantic search, relevance ranking, filters", status: "pending" },
+            { id: "3b3", track: "b", name: "Build RAG Retrieval for Agents", detail: "CSX-75 · Retrieval-augmented generation pipeline, context injection, accuracy", status: "pending" },
+        ]},
+        { day: 14, week: 3, weekTitle: "Knowledge Base & Scenario Testing", clientFocus: "Agent intelligence & quality assurance", tasks: [
+            { id: "3a4", track: "a", name: "Add Voice Test to Scenario", detail: "CSX-53 · Voice-based sandbox testing, audio playback, scenario simulation", status: "pending" },
+            { id: "3b4", track: "b", name: "Add Text / Chat Test to Scenario", detail: "CSX-54 · Chat-based sandbox testing, conversation threading, response eval", status: "pending" },
+        ]},
+        { day: 15, week: 3, weekTitle: "Knowledge Base & Scenario Testing", clientFocus: "Agent intelligence & quality assurance", tasks: [
+            { id: "3a5", track: "a", name: "Add Knowledge Base Tab to Scenario", detail: "CSX-49 · Per-scenario KB linking, document selection, context preview", status: "pending" },
+            { id: "3b5", track: "b", name: "Fix Document Search in Scenario Prompt", detail: "CSX-87 · Bug fix: document search returning incorrect results in prompts", status: "pending" },
+        ], demo: { label: "DEMO 3", text: "Knowledge Base pipeline + RAG retrieval + Sandbox testing suite" }},
+
+        // ══════════════════════════════════════════════════════════
+        // WEEK 4: Call Infrastructure & Real-Time AI
+        // Client Focus: "Can it handle live calls with real-time intelligence?"
+        // Linear: CSX-94, CSX-93, CSX-55, CSX-57, CSX-96, CSX-100, CSX-90, CSX-60, CSX-61
+        // ══════════════════════════════════════════════════════════
+        { day: 16, week: 4, weekTitle: "Call Infrastructure & Real-Time AI", clientFocus: "Live call handling & AI-powered assistance", tasks: [
+            { id: "4a1", track: "a", name: "Connect Deepgram for Transcription", detail: "CSX-94 · Real-time STT integration, streaming WebSocket, speaker diarization", status: "pending" },
+            { id: "4b1", track: "b", name: "Live Call Transcription", detail: "CSX-93 · Real-time transcript display, auto-scroll, speaker identification", status: "pending" },
+        ]},
+        { day: 17, week: 4, weekTitle: "Call Infrastructure & Real-Time AI", clientFocus: "Live call handling & AI-powered assistance", tasks: [
+            { id: "4a2", track: "a", name: "Build Call Logs List Page", detail: "CSX-55 · Filterable call history table, search, date range, export", status: "pending" },
+            { id: "4b2", track: "b", name: "Individual Call Detail Page", detail: "CSX-57 · Call replay, transcript view, signal scores, AI summary", status: "pending" },
+        ]},
+        { day: 18, week: 4, weekTitle: "Call Infrastructure & Real-Time AI", clientFocus: "Live call handling & AI-powered assistance", tasks: [
+            { id: "4a3", track: "a", name: "Display Suggested Responses in Real Time", detail: "CSX-96 · AI-generated response suggestions, confidence scores, one-click use", status: "pending" },
+            { id: "4b3", track: "b", name: "Show KB Results Without Leaving Call View", detail: "CSX-100 · In-call knowledge panel, contextual doc results, inline preview", status: "pending" },
+        ]},
+        { day: 19, week: 4, weekTitle: "Call Infrastructure & Real-Time AI", clientFocus: "Live call handling & AI-powered assistance", tasks: [
+            { id: "4a4", track: "a", name: "Customer Profile Display", detail: "CSX-90 · CRM integration, member profile card, account summary, history", status: "pending" },
+            { id: "4b4", track: "b", name: "Live Monitoring Calls", detail: "CSX-60 · Active call grid, real-time status, sentiment indicators", status: "pending" },
+        ]},
+        { day: 20, week: 4, weekTitle: "Call Infrastructure & Real-Time AI", clientFocus: "Live call handling & AI-powered assistance", tasks: [
+            { id: "4a5", track: "a", name: "Live Listen Feature", detail: "CSX-61 · Supervisor listen-in, whisper mode, call intervention controls", status: "pending" },
+            { id: "4b5", track: "b", name: "End-to-End Call Flow Integration", detail: "Full call lifecycle: inbound → route → transcribe → assist → log → summarize", status: "pending" },
+        ], demo: { label: "DEMO 4", text: "Live call handling + real-time AI assist + call logs + monitoring" }},
+
+        // ══════════════════════════════════════════════════════════
+        // WEEK 5: Integration, Monitoring & Final Delivery
+        // Client Focus: "Does everything work together for our team?"
+        // Final integration, QA, polish, and client handover
+        // ══════════════════════════════════════════════════════════
+        { day: 21, week: 5, weekTitle: "Integration & Final Delivery", clientFocus: "Production readiness & end-to-end quality", tasks: [
+            { id: "5a1", track: "a", name: "Cross-Feature Data Integration", detail: "Dashboard ↔ Call Logs ↔ Agent Canvas data bridge, shared state", status: "pending" },
+            { id: "5b1", track: "b", name: "AI Assist ↔ Core Platform Bridge", detail: "Transcription feeds call logs, KB results sync, CRM data flows", status: "pending" },
+        ]},
+        { day: 22, week: 5, weekTitle: "Integration & Final Delivery", clientFocus: "Production readiness & end-to-end quality", tasks: [
+            { id: "5a2", track: "a", name: "Performance Optimization", detail: "Lazy loading, code splitting, caching, API response optimization", status: "pending" },
+            { id: "5b2", track: "b", name: "Responsive Design + Accessibility", detail: "Mobile-friendly layouts, WCAG compliance, keyboard navigation", status: "pending" },
+        ]},
+        { day: 23, week: 5, weekTitle: "Integration & Final Delivery", clientFocus: "Production readiness & end-to-end quality", tasks: [
+            { id: "5a3", track: "a", name: "Edge Cases + Bug Fixes", detail: "Error boundaries, empty states, loading states, edge case handling", status: "pending" },
+            { id: "5b3", track: "b", name: "Demo Data Seeding (Lakeside CU)", detail: "Realistic credit union data across all screens, demo scenarios", status: "pending" },
+        ]},
+        { day: 24, week: 5, weekTitle: "Integration & Final Delivery", clientFocus: "Production readiness & end-to-end quality", tasks: [
+            { id: "5a4", track: "a", name: "Dry Run — Full Platform Walkthrough", detail: "End-to-end demo simulation, both tracks, all features", status: "pending" },
+            { id: "5b4", track: "b", name: "QA & Final Adjustments", detail: "Final bug triage, UI polish, copy review, sign-off checklist", status: "pending" },
+        ]},
+        { day: 25, week: 5, weekTitle: "Integration & Final Delivery", clientFocus: "Production readiness & end-to-end quality", tasks: [
+            { id: "5a5", track: "a", name: "Documentation + Handover Prep", detail: "Technical docs, deployment guide, admin training material", status: "pending" },
+            { id: "5b5", track: "b", name: "CLIENT DEMO — Final Delivery", detail: "Full platform walkthrough — all features integrated, live demo", status: "pending" },
+        ], demo: { label: "FINAL DEMO", text: "Complete CSxAI — Infrastructure + Dashboard + Agents + KB + Live Calls — fully integrated" }},
+    ]
+};
+
+// ── State Management ──
+const STORAGE_KEY = "csxai-tracker-state";
+let activeFilter = "all";
+
+function loadState() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return;
+    try {
+        const state = JSON.parse(saved);
+        PROJECT.days.forEach(d => {
+            d.tasks.forEach(t => {
+                if (state[t.id]) t.status = state[t.id];
+            });
+            // Load text edits for tasks
+            d.tasks.forEach(t => {
+                if (state[`${t.id}_name`]) t.name = state[`${t.id}_name`];
+                if (state[`${t.id}_detail`]) t.detail = state[`${t.id}_detail`];
+            });
+            // Load week title and client focus edits
+            if (state[`week_${d.week}_title`]) d.weekTitle = state[`week_${d.week}_title`];
+            if (state[`week_${d.week}_focus`]) d.clientFocus = state[`week_${d.week}_focus`];
+            // Load demo text edits
+            if (d.demo && state[`demo_day_${d.day}_label`]) d.demo.label = state[`demo_day_${d.day}_label`];
+            if (d.demo && state[`demo_day_${d.day}_text`]) d.demo.text = state[`demo_day_${d.day}_text`];
+        });
+    } catch(e) {}
+}
+
+function saveState() {
+    const state = {};
+    PROJECT.days.forEach(d => {
+        d.tasks.forEach(t => {
+            state[t.id] = t.status;
+            state[`${t.id}_name`] = t.name;
+            state[`${t.id}_detail`] = t.detail;
+        });
+        state[`week_${d.week}_title`] = d.weekTitle;
+        if (d.clientFocus) state[`week_${d.week}_focus`] = d.clientFocus;
+        if (d.demo) {
+            state[`demo_day_${d.day}_label`] = d.demo.label;
+            state[`demo_day_${d.day}_text`] = d.demo.text;
+        }
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// ── Inline Edit Handlers ──
+function onEditField(el, type, key) {
+    const text = el.innerText.trim();
+    if (!text) return;
+    if (type === "task-name") {
+        PROJECT.days.forEach(d => d.tasks.forEach(t => { if (t.id === key) t.name = text; }));
+    } else if (type === "task-detail") {
+        PROJECT.days.forEach(d => d.tasks.forEach(t => { if (t.id === key) t.detail = text; }));
+    } else if (type === "week-title") {
+        PROJECT.days.forEach(d => { if (d.week === parseInt(key)) d.weekTitle = text; });
+    } else if (type === "client-focus") {
+        PROJECT.days.forEach(d => { if (d.week === parseInt(key)) d.clientFocus = text; });
+    } else if (type === "demo-label") {
+        PROJECT.days.forEach(d => { if (d.demo && d.day === parseInt(key)) d.demo.label = text; });
+    } else if (type === "demo-text") {
+        PROJECT.days.forEach(d => { if (d.demo && d.day === parseInt(key)) d.demo.text = text; });
+    }
+    saveState();
+    // Re-render panels that depend on this data (but not the day view to avoid losing focus)
+    renderMilestones();
+    renderRiskAlerts();
+    renderSummary();
+    renderDigest();
+}
+
+function handleEditKeydown(e) {
+    if (e.key === "Enter") { e.preventDefault(); e.target.blur(); }
+    if (e.key === "Escape") { e.target.blur(); }
+}
+
+function stopPropagation(e) { e.stopPropagation(); }
+
+function cycleStatus(taskId) {
+    const order = ["pending", "in-progress", "completed", "backlog"];
+    const labels = { pending: "Pending", "in-progress": "In Progress", completed: "Completed", backlog: "Backlog" };
+    let task;
+    PROJECT.days.forEach(d => d.tasks.forEach(t => { if (t.id === taskId) task = t; }));
+    if (!task) return;
+    const idx = order.indexOf(task.status);
+    task.status = order[(idx + 1) % order.length];
+    saveState();
+    renderAll();
+    showToast(`${task.name} → ${labels[task.status]}`);
+}
+
+// ── Donut Chart ──
+function drawDonut() {
+    const canvas = document.getElementById("donutChart");
+    const ctx = canvas.getContext("2d");
+    const allTasks = PROJECT.days.flatMap(d => d.tasks);
+    const counts = { completed: 0, "in-progress": 0, pending: 0, backlog: 0 };
+    allTasks.forEach(t => counts[t.status]++);
+    const total = allTasks.length;
+    const pct = Math.round((counts.completed / total) * 100);
+    document.getElementById("donutPct").textContent = pct + "%";
+
+    const colors = { completed: "#34d399", "in-progress": "#fbbf24", pending: "#334155", backlog: "#f87171" };
+    const segments = [
+        { val: counts.completed, color: colors.completed },
+        { val: counts["in-progress"], color: colors["in-progress"] },
+        { val: counts.backlog, color: colors.backlog },
+        { val: counts.pending, color: colors.pending },
+    ];
+
+    const cx = 80, cy = 80, r = 65, lw = 14;
+    ctx.clearRect(0, 0, 160, 160);
+    let start = -Math.PI / 2;
+    segments.forEach(s => {
+        if (s.val === 0) return;
+        const angle = (s.val / total) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, start, start + angle);
+        ctx.strokeStyle = s.color;
+        ctx.lineWidth = lw;
+        ctx.lineCap = "round";
+        ctx.stroke();
+        start += angle;
+    });
+
+    document.getElementById("donutLegend").innerHTML = [
+        { label: "Done", color: colors.completed, count: counts.completed },
+        { label: "Active", color: colors["in-progress"], count: counts["in-progress"] },
+        { label: "Pending", color: colors.pending, count: counts.pending },
+        { label: "Backlog", color: colors.backlog, count: counts.backlog },
+    ].map(l => `<div class="legend-item"><div class="legend-dot" style="background:${l.color}"></div>${l.label}: ${l.count}</div>`).join("");
+}
+
+// ── Metrics ──
+function renderMetrics() {
+    const allTasks = PROJECT.days.flatMap(d => d.tasks);
+    const total = allTasks.length;
+    const completed = allTasks.filter(t => t.status === "completed").length;
+    const inProgress = allTasks.filter(t => t.status === "in-progress").length;
+    const backlog = allTasks.filter(t => t.status === "backlog").length;
+    const daysWithAllDone = PROJECT.days.filter(d => d.tasks.every(t => t.status === "completed")).length;
+
+    const metrics = [
+        { value: completed, label: "Tasks Done", color: "var(--emerald)", pct: (completed/total)*100 },
+        { value: inProgress, label: "In Progress", color: "var(--amber)", pct: (inProgress/total)*100 },
+        { value: backlog, label: "In Backlog", color: "var(--red)", pct: (backlog/total)*100 },
+        { value: `${daysWithAllDone}/25`, label: "Days Complete", color: "var(--primary-light)", pct: (daysWithAllDone/25)*100 },
+    ];
+    document.getElementById("metricsGrid").innerHTML = metrics.map(m => `
+        <div class="metric-card">
+            <div class="metric-value" style="color:${m.color}">${m.value}</div>
+            <div class="metric-label">${m.label}</div>
+            <div class="metric-bar"><div class="metric-bar-fill" style="width:${m.pct}%;background:${m.color}"></div></div>
+        </div>
+    `).join("");
+
+    // Track cards
+    const trackATasks = allTasks.filter(t => t.track === "a");
+    const trackBTasks = allTasks.filter(t => t.track === "b");
+    const trackADone = trackATasks.filter(t => t.status === "completed").length;
+    const trackBDone = trackBTasks.filter(t => t.status === "completed").length;
+    const trackAPct = Math.round((trackADone / trackATasks.length) * 100);
+    const trackBPct = Math.round((trackBDone / trackBTasks.length) * 100);
+
+    document.getElementById("trackCards").innerHTML = `
+        <div class="track-card">
+            <div class="track-card-header"><div class="track-dot" style="background:var(--teal)"></div><h4>Track A — Core Platform</h4><span>${trackADone}/${trackATasks.length}</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:${trackAPct}%;background:var(--teal)"></div></div>
+        </div>
+        <div class="track-card">
+            <div class="track-card-header"><div class="track-dot" style="background:var(--violet)"></div><h4>Track B — Agent Assist</h4><span>${trackBDone}/${trackBTasks.length}</span></div>
+            <div class="mini-bar"><div class="mini-bar-fill" style="width:${trackBPct}%;background:var(--violet)"></div></div>
+        </div>
+    `;
+}
+
+// ── Updates ──
+function renderUpdates() {
+    document.getElementById("updatesList").innerHTML = PROJECT.updates.map(u => `
+        <div class="update-card">
+            <div class="update-type ${u.type}">${u.type}</div>
+            <div class="update-content"><h4>${u.title}</h4><p>${u.description}</p></div>
+            <div class="update-date">${u.date}</div>
+        </div>
+    `).join("");
+}
+
+// ── Day View ──
+function renderDays() {
+    const container = document.getElementById("daysContainer");
+    let lastWeek = 0;
+    container.innerHTML = PROJECT.days.map(d => {
+        const dayStatus = d.tasks.every(t => t.status === "completed") ? "completed"
+            : d.tasks.some(t => t.status === "in-progress") ? "current" : "pending";
+        const showWeekHeader = d.week !== lastWeek;
+        lastWeek = d.week;
+
+        const filteredTasks = d.tasks.filter(t => {
+            if (activeFilter === "all") return true;
+            if (activeFilter === "track-a") return t.track === "a";
+            if (activeFilter === "track-b") return t.track === "b";
+            return t.status === activeFilter;
+        });
+        if (filteredTasks.length === 0 && !d.demo) return "";
+
+        const statusIcons = { completed: "✓", "in-progress": "●", pending: "○", backlog: "⚠" };
+        const statusLabels = { completed: "Done", "in-progress": "Active", pending: "Pending", backlog: "Backlog" };
+
+        return `
+            ${showWeekHeader ? `<div style="margin-top:${d.day===1?0:28}px;margin-bottom:12px;">
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="font-size:14px;font-weight:700;color:var(--primary-light);">Week ${d.week}</div>
+                    <div class="editable" contenteditable="true" style="font-size:13px;color:var(--text-muted);" onblur="onEditField(this,'week-title','${d.week}')" onkeydown="handleEditKeydown(event)" data-placeholder="Week title...">${d.weekTitle}</div>
+                    <div style="flex:1;height:1px;background:var(--border);"></div>
+                </div>
+                <div style="margin-top:6px;padding:8px 14px;background:linear-gradient(135deg,rgba(124,92,252,0.12),rgba(96,165,250,0.08));border:1px solid rgba(124,92,252,0.2);border-radius:8px;display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:13px;">🎯</span>
+                    <span style="font-size:12px;font-weight:600;color:var(--primary-light);">Client Focus:</span>
+                    <span class="editable" contenteditable="true" style="font-size:12px;color:var(--text-muted);" onblur="onEditField(this,'client-focus','${d.week}')" onkeydown="handleEditKeydown(event)" data-placeholder="What the client cares about...">${d.clientFocus || ''}</span>
+                </div>
+            </div>` : ""}
+            <div class="day-group">
+                <div class="day-header">
+                    <div class="day-badge ${dayStatus}">
+                        <div class="day-num">${d.day}</div>
+                        <div class="day-label">Day</div>
+                    </div>
+                    <div class="day-line"></div>
+                </div>
+                <div class="day-tasks">
+                    <div class="day-connector ${dayStatus}"><div class="connector-line"></div></div>
+                    <div class="tasks-column">
+                        ${filteredTasks.map(t => `
+                            <div class="task-card ${t.status}">
+                                <div class="task-track-badge ${t.track}" onclick="cycleStatus('${t.id}')">${t.track === "a" ? "Core" : "Assist"}</div>
+                                <div class="task-info">
+                                    <div class="task-name editable" contenteditable="true" onclick="stopPropagation(event)" onblur="onEditField(this,'task-name','${t.id}')" onkeydown="handleEditKeydown(event)" data-placeholder="Task name...">${t.name}</div>
+                                    <div class="task-detail editable" contenteditable="true" onclick="stopPropagation(event)" onblur="onEditField(this,'task-detail','${t.id}')" onkeydown="handleEditKeydown(event)" data-placeholder="Task detail...">${t.detail}</div>
+                                </div>
+                                <div class="task-status-btn ${t.status}" onclick="cycleStatus('${t.id}')">
+                                    <span class="status-icon">${statusIcons[t.status]}</span>
+                                    ${statusLabels[t.status]}
+                                </div>
+                            </div>
+                        `).join("")}
+                        ${d.demo ? `
+                            <div class="demo-card">
+                                <div class="demo-badge editable" contenteditable="true" onblur="onEditField(this,'demo-label','${d.day}')" onkeydown="handleEditKeydown(event)">${d.demo.label}</div>
+                                <div class="demo-text editable" contenteditable="true" onblur="onEditField(this,'demo-text','${d.day}')" onkeydown="handleEditKeydown(event)" data-placeholder="Demo description...">${d.demo.text}</div>
+                            </div>
+                        ` : ""}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+// ── Filter ──
+function setFilter(filter) {
+    activeFilter = filter;
+    document.querySelectorAll(".filter-pill").forEach(p => p.classList.toggle("active", p.dataset.filter === filter));
+    renderDays();
+}
+
+// ── Voice Modal ──
+function openVoiceModal() { document.getElementById("voiceModal").classList.add("active"); }
+function closeVoiceModal() { document.getElementById("voiceModal").classList.remove("active"); }
+document.getElementById("voiceModal").addEventListener("click", e => { if (e.target === e.currentTarget) closeVoiceModal(); });
+
+// ── Toast ──
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.innerHTML = `✅ ${msg}`;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+// ── Milestone Stepper ──
+function renderMilestones() {
+    const milestones = [
+        { label: "Demo 1", sub: "Day 5", days: [1,2,3,4,5] },
+        { label: "Demo 2", sub: "Day 10", days: [6,7,8,9,10] },
+        { label: "Demo 3", sub: "Day 15", days: [11,12,13,14,15] },
+        { label: "Demo 4", sub: "Day 20", days: [16,17,18,19,20] },
+        { label: "Final", sub: "Day 25", days: [21,22,23,24,25] },
+    ];
+
+    const allTasks = PROJECT.days.flatMap(d => d.tasks);
+    const completedCount = allTasks.filter(t => t.status === "completed").length;
+
+    // Find next demo
+    let nextDemo = null, nextDemoDaysLeft = 0;
+    for (const m of milestones) {
+        const mTasks = PROJECT.days.filter(d => m.days.includes(d.day)).flatMap(d => d.tasks);
+        const done = mTasks.every(t => t.status === "completed");
+        if (!done) {
+            nextDemo = m;
+            // Calculate days until this demo based on project start
+            const start = new Date(PROJECT.startDate);
+            const demoDay = m.days[m.days.length - 1];
+            const demoDate = new Date(start);
+            demoDate.setDate(demoDate.getDate() + demoDay - 1);
+            const today = new Date();
+            nextDemoDaysLeft = Math.max(0, Math.ceil((demoDate - today) / (1000*60*60*24)));
+            break;
+        }
+    }
+
+    const stepsHTML = milestones.map((m, i) => {
+        const mTasks = PROJECT.days.filter(d => m.days.includes(d.day)).flatMap(d => d.tasks);
+        const done = mTasks.filter(t => t.status === "completed").length;
+        const total = mTasks.length;
+        const allDone = done === total;
+        const hasProgress = done > 0;
+        const pct = Math.round((done / total) * 100);
+
+        let dotClass = "upcoming";
+        let dotContent = i + 1;
+        if (allDone) { dotClass = "done"; dotContent = "✓"; }
+        else if (hasProgress) { dotClass = "active"; dotContent = `${pct}%`; }
+
+        const connector = i < milestones.length - 1 ? `<div class="milestone-connector ${allDone ? "done" : hasProgress ? "partial" : ""}"></div>` : "";
+
+        return `
+            <div class="milestone-step">
+                <div class="milestone-dot ${dotClass}">${dotContent}</div>
+                <div class="milestone-label">${m.label}</div>
+                <div class="milestone-sub">${m.sub} · ${done}/${total}</div>
+            </div>
+            ${connector}
+        `;
+    }).join("");
+
+    const countdownHTML = nextDemo ? `
+        <div class="milestone-countdown">
+            <div class="countdown-badge">⏱ ${nextDemoDaysLeft} day${nextDemoDaysLeft !== 1 ? "s" : ""}</div>
+            <div class="countdown-text">until <strong>${nextDemo.label}</strong> — ${nextDemo.sub}</div>
+        </div>
+    ` : `<div class="milestone-countdown"><div class="countdown-badge" style="background:var(--emerald-bg);color:var(--emerald);">🎉 All demos complete!</div></div>`;
+
+    document.getElementById("milestoneSection").innerHTML = `
+        <div class="milestone-card">
+            <h3>🏁 Milestone Progress</h3>
+            <div class="milestone-track">${stepsHTML}</div>
+            ${countdownHTML}
+        </div>
+    `;
+}
+
+// ── Risk Alerts ──
+function renderRiskAlerts() {
+    const allTasks = PROJECT.days.flatMap(d => d.tasks);
+    const backlogTasks = [];
+    PROJECT.days.forEach(d => {
+        d.tasks.forEach(t => {
+            if (t.status === "backlog") backlogTasks.push({ ...t, day: d.day, week: d.week });
+        });
+    });
+
+    if (backlogTasks.length === 0) {
+        document.getElementById("riskSection").innerHTML = "";
+        return;
+    }
+
+    // Check which demos are impacted
+    const demoRanges = [
+        { label: "Demo 1", days: [1,2,3,4,5] },
+        { label: "Demo 2", days: [6,7,8,9,10] },
+        { label: "Demo 3", days: [11,12,13,14,15] },
+        { label: "Demo 4", days: [16,17,18,19,20] },
+        { label: "Final Demo", days: [21,22,23,24,25] },
+    ];
+
+    const alerts = backlogTasks.map(t => {
+        const impactedDemo = demoRanges.find(d => d.days.includes(t.day));
+        return `
+            <div class="risk-alert">
+                <div class="risk-icon">⚠️</div>
+                <div class="risk-content">
+                    <h4>${t.name} — moved to backlog</h4>
+                    <p>Day ${t.day} (Week ${t.week}) · Track ${t.track.toUpperCase()}${impactedDemo ? ` · May impact ${impactedDemo.label}` : ""}</p>
+                </div>
+                <div class="risk-impact">${impactedDemo ? `Delays ${impactedDemo.label}` : "Scope risk"}</div>
+            </div>
+        `;
+    });
+
+    document.getElementById("riskSection").innerHTML = alerts.join("");
+}
+
+// ── Progress Chart + ETA ──
+function renderProgressChart() {
+    const canvas = document.getElementById("progressChart");
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+    const allTasks = PROJECT.days.flatMap(d => d.tasks);
+    const total = allTasks.length;
+    const pad = { top: 20, right: 20, bottom: 30, left: 40 };
+    const chartW = W - pad.left - pad.right;
+    const chartH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = "rgba(255,255,255,0.05)";
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+        const y = pad.top + (chartH / 4) * i;
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+    }
+
+    // X-axis labels (Week 1-5)
+    ctx.fillStyle = "#8892b0"; ctx.font = "10px -apple-system, sans-serif"; ctx.textAlign = "center";
+    [1, 2, 3, 4, 5].forEach(w => {
+        const midDay = (w - 1) * 5 + 3; // middle of each week
+        const x = pad.left + ((midDay - 1) / 24) * chartW;
+        ctx.fillText(`W${w}`, x, H - 8);
+    });
+
+    // Y-axis labels
+    ctx.textAlign = "right";
+    [0, 25, 50, 75, 100].forEach((pct, i) => {
+        const y = pad.top + chartH - (chartH / 4) * i;
+        ctx.fillText(`${pct}%`, pad.left - 8, y + 3);
+    });
+
+    // Expected line (dashed diagonal)
+    ctx.strokeStyle = "rgba(100,116,139,0.5)";
+    ctx.setLineDash([6, 4]);
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, pad.top + chartH);
+    ctx.lineTo(pad.left + chartW, pad.top);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Calculate actual progress per day
+    const dayProgress = [];
+    let cumDone = 0;
+    for (let d = 1; d <= 25; d++) {
+        const dayData = PROJECT.days.find(dd => dd.day === d);
+        if (dayData) {
+            const doneTasks = dayData.tasks.filter(t => t.status === "completed").length;
+            cumDone += doneTasks;
+        }
+        dayProgress.push(cumDone);
+    }
+
+    // Find last day with progress
+    let lastProgressDay = 0;
+    for (let i = 0; i < 25; i++) {
+        if (dayProgress[i] > 0) lastProgressDay = i + 1;
+    }
+
+    if (lastProgressDay > 0) {
+        // Actual line (solid emerald)
+        ctx.strokeStyle = "#34d399";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round"; ctx.lineJoin = "round";
+        ctx.beginPath();
+        for (let i = 0; i < lastProgressDay; i++) {
+            const x = pad.left + (i / 24) * chartW;
+            const y = pad.top + chartH - (dayProgress[i] / total) * chartH;
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        // Actual fill
+        ctx.fillStyle = "rgba(52,211,153,0.08)";
+        ctx.beginPath();
+        ctx.moveTo(pad.left, pad.top + chartH);
+        for (let i = 0; i < lastProgressDay; i++) {
+            const x = pad.left + (i / 24) * chartW;
+            const y = pad.top + chartH - (dayProgress[i] / total) * chartH;
+            ctx.lineTo(x, y);
+        }
+        const lastX = pad.left + ((lastProgressDay - 1) / 24) * chartW;
+        ctx.lineTo(lastX, pad.top + chartH);
+        ctx.closePath();
+        ctx.fill();
+
+        // Projected line (dashed purple from last point to estimated end)
+        if (cumDone < total && lastProgressDay > 0) {
+            const velocity = cumDone / lastProgressDay; // tasks per day
+            const remainingTasks = total - cumDone;
+            const projectedDaysLeft = velocity > 0 ? Math.ceil(remainingTasks / velocity) : 99;
+            const projectedEndDay = Math.min(lastProgressDay + projectedDaysLeft, 30);
+
+            ctx.strokeStyle = "rgba(124,92,252,0.7)";
+            ctx.setLineDash([4, 4]);
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const startX = pad.left + ((lastProgressDay - 1) / 24) * chartW;
+            const startY = pad.top + chartH - (cumDone / total) * chartH;
+            ctx.moveTo(startX, startY);
+            const endX = pad.left + Math.min(((projectedEndDay - 1) / 24), 1) * chartW;
+            ctx.lineTo(endX, pad.top);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Dot on last actual point
+        const dotX = pad.left + ((lastProgressDay - 1) / 24) * chartW;
+        const dotY = pad.top + chartH - (dayProgress[lastProgressDay - 1] / total) * chartH;
+        ctx.fillStyle = "#34d399";
+        ctx.beginPath(); ctx.arc(dotX, dotY, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#151829";
+        ctx.beginPath(); ctx.arc(dotX, dotY, 2, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // "Today" marker
+    const start = new Date(PROJECT.startDate);
+    const today = new Date();
+    const daysSinceStart = Math.floor((today - start) / (1000*60*60*24)) + 1;
+    if (daysSinceStart >= 1 && daysSinceStart <= 25) {
+        const todayX = pad.left + ((daysSinceStart - 1) / 24) * chartW;
+        ctx.strokeStyle = "rgba(251,191,36,0.4)";
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(todayX, pad.top); ctx.lineTo(todayX, pad.top + chartH); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "#fbbf24"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("TODAY", todayX, pad.top - 6);
+    }
+
+    // ETA cards
+    const completed = allTasks.filter(t => t.status === "completed").length;
+    const velocity = lastProgressDay > 0 ? (completed / lastProgressDay) : 0;
+    const remaining = total - completed;
+    let etaDay, etaLabel, etaColor;
+
+    if (completed === total) {
+        etaLabel = "Complete!"; etaColor = "var(--emerald)";
+    } else if (velocity > 0) {
+        const etaDay = Math.ceil(lastProgressDay + remaining / velocity);
+        const etaWeek = Math.ceil(etaDay / 5);
+        etaLabel = etaDay <= 25 ? `Week ${etaWeek}` : `Week ${etaWeek} (+${etaDay - 25} over)`;
+        etaColor = etaDay <= 25 ? "var(--emerald)" : "var(--red)";
+    } else {
+        etaLabel = "—"; etaColor = "var(--text-muted)";
+    }
+
+    const velocityLabel = velocity > 0 ? velocity.toFixed(1) : "—";
+
+    document.getElementById("progressEta").innerHTML = `
+        <div class="eta-card">
+            <div class="eta-value" style="color:${etaColor};">${etaLabel}</div>
+            <div class="eta-label">Projected Finish</div>
+        </div>
+        <div class="eta-card">
+            <div class="eta-value" style="color:var(--primary-light);">${velocityLabel}</div>
+            <div class="eta-label">Tasks / Day</div>
+        </div>
+    `;
+}
+
+// ── Weekly Digest ──
+function renderDigest() {
+    const weeks = [
+        { num: 1, title: "Infrastructure & Cloud Setup", days: [1,2,3,4,5] },
+        { num: 2, title: "Dashboard & Agent Configuration", days: [6,7,8,9,10] },
+        { num: 3, title: "Knowledge Base & Scenario Testing", days: [11,12,13,14,15] },
+        { num: 4, title: "Call Infrastructure & Real-Time AI", days: [16,17,18,19,20] },
+        { num: 5, title: "Integration & Final Delivery", days: [21,22,23,24,25] },
+    ];
+
+    // Determine current week based on date
+    const start = new Date(PROJECT.startDate);
+    const today = new Date();
+    const daysSinceStart = Math.floor((today - start) / (1000*60*60*24)) + 1;
+    const currentWeek = Math.min(5, Math.max(1, Math.ceil(daysSinceStart / 5)));
+
+    const weeksHTML = weeks.map(w => {
+        const wTasks = PROJECT.days.filter(d => w.days.includes(d.day)).flatMap(d => d.tasks);
+        const done = wTasks.filter(t => t.status === "completed");
+        const inProg = wTasks.filter(t => t.status === "in-progress");
+        const backlog = wTasks.filter(t => t.status === "backlog");
+        const total = wTasks.length;
+        const pct = Math.round((done.length / total) * 100);
+
+        let badge, status;
+        if (daysSinceStart < 1) {
+            badge = "future"; status = "upcoming";
+        } else if (w.num < currentWeek) {
+            badge = "past"; status = "past";
+        } else if (w.num === currentWeek) {
+            badge = "current"; status = "current";
+        } else {
+            badge = "future"; status = "upcoming";
+        }
+
+        // Override based on actual progress
+        if (done.length === total) { badge = "past"; }
+
+        // Generate summary text
+        let summaryText = "";
+        if (done.length === 0 && inProg.length === 0) {
+            summaryText = `<strong>${total} tasks</strong> planned. Covers: ${wTasks.slice(0, 3).map(t => t.name).join(", ")}.`;
+        } else if (done.length === total) {
+            summaryText = `All <strong>${total} tasks completed</strong>. Key deliverables: ${done.slice(0, 3).map(t => `<strong>${t.name}</strong>`).join(", ")}.`;
+        } else {
+            const parts = [`<strong>${done.length}/${total}</strong> tasks done (${pct}%)`];
+            if (inProg.length > 0) parts.push(`<strong>${inProg.length}</strong> in progress`);
+            if (backlog.length > 0) parts.push(`<strong style="color:var(--red);">${backlog.length} in backlog</strong>`);
+            summaryText = parts.join(" · ") + ". ";
+            if (done.length > 0) summaryText += `Completed: ${done.map(t => t.name).join(", ")}.`;
+        }
+
+        const highlights = wTasks.filter(t => t.status === "completed" || t.status === "in-progress")
+            .slice(0, 4).map(t => `<div class="digest-tag" style="${t.status === 'completed' ? 'border-color:var(--emerald-border);color:var(--emerald);' : 'border-color:var(--amber-border);color:var(--amber);'}">${t.status === 'completed' ? '✓' : '●'} ${t.name}</div>`);
+
+        return `
+            <div class="digest-week">
+                <div class="digest-week-header">
+                    <div class="digest-week-badge ${badge}">Week ${w.num}</div>
+                    <div class="digest-week-title">${w.title}</div>
+                    <div class="digest-week-stats">${done.length}/${total} done</div>
+                </div>
+                <div class="digest-text">${summaryText}</div>
+                ${highlights.length > 0 ? `<div class="digest-highlights">${highlights.join("")}</div>` : ""}
+            </div>
+        `;
+    }).join("");
+
+    document.getElementById("digestSection").innerHTML = `
+        <div class="digest-card">
+            <div class="digest-header" onclick="toggleDigest()">
+                <h3>📋 Weekly Digest</h3>
+                <span class="digest-toggle open" id="digestToggle">▼</span>
+            </div>
+            <div class="digest-body" id="digestBody">${weeksHTML}</div>
+        </div>
+    `;
+}
+
+let digestOpen = true;
+function toggleDigest() {
+    digestOpen = !digestOpen;
+    document.getElementById("digestBody").style.display = digestOpen ? "block" : "none";
+    document.getElementById("digestToggle").classList.toggle("open", digestOpen);
+}
+
+// ── PM Summary ──
+function renderSummary() {
+    const allTasks = PROJECT.days.flatMap(d => d.tasks);
+    const total = allTasks.length;
+    const completed = allTasks.filter(t => t.status === "completed");
+    const inProgress = allTasks.filter(t => t.status === "in-progress");
+    const backlog = allTasks.filter(t => t.status === "backlog");
+    const pending = allTasks.filter(t => t.status === "pending");
+
+    const pct = Math.round((completed.length / total) * 100);
+    const trackA = allTasks.filter(t => t.track === "a");
+    const trackB = allTasks.filter(t => t.track === "b");
+    const trackADone = trackA.filter(t => t.status === "completed").length;
+    const trackBDone = trackB.filter(t => t.status === "completed").length;
+    const trackAPct = Math.round((trackADone / trackA.length) * 100);
+    const trackBPct = Math.round((trackBDone / trackB.length) * 100);
+
+    // Health status
+    const backlogRatio = backlog.length / total;
+    let health, healthLabel;
+    if (backlogRatio > 0.2) { health = "red"; healthLabel = "At Risk"; }
+    else if (backlogRatio > 0.08 || (inProgress.length === 0 && completed.length < total)) { health = "yellow"; healthLabel = "Needs Attention"; }
+    else if (completed.length === total) { health = "green"; healthLabel = "Complete"; }
+    else if (completed.length === 0 && inProgress.length === 0) { health = "gray"; healthLabel = "Not Started"; }
+    else { health = "green"; healthLabel = "On Track"; }
+
+    // Build narrative
+    let narrative = "";
+    if (completed.length === 0 && inProgress.length === 0) {
+        narrative = `Project has <strong>${total} tasks</strong> queued across 25 days. No work has started yet — all tasks are in <strong>pending</strong> status. Once Day 1 kicks off, this summary will dynamically update with progress insights, risk flags, and track-level breakdowns.`;
+    } else if (completed.length === total) {
+        narrative = `All <strong>${total} tasks</strong> are complete. Both Track A (Core Platform) and Track B (Agent Assist) are fully delivered. The project is ready for final client demo and handover.`;
+    } else {
+        const parts = [];
+        parts.push(`<strong>${pct}%</strong> of the project is complete — <strong>${completed.length}</strong> of ${total} tasks done`);
+        if (inProgress.length > 0) parts.push(`with <strong>${inProgress.length}</strong> currently in progress`);
+        narrative = parts.join(", ") + ". ";
+
+        // Track balance
+        const diff = Math.abs(trackAPct - trackBPct);
+        if (diff > 20) {
+            const ahead = trackAPct > trackBPct ? "Track A" : "Track B";
+            const behind = trackAPct > trackBPct ? "Track B" : "Track A";
+            narrative += `<strong>${ahead}</strong> is running ahead at ${Math.max(trackAPct, trackBPct)}% while <strong>${behind}</strong> sits at ${Math.min(trackAPct, trackBPct)}% — consider rebalancing effort. `;
+        } else {
+            narrative += `Both tracks are progressing at a balanced pace (A: ${trackAPct}%, B: ${trackBPct}%). `;
+        }
+
+        if (backlog.length > 0) {
+            narrative += `<strong>${backlog.length} task${backlog.length > 1 ? "s" : ""}</strong> pushed to backlog — review these for re-prioritization or scope adjustment.`;
+        }
+    }
+
+    // Block lists (max 4 items each)
+    const completedList = completed.slice(-4).map(t => `<li>${t.name}</li>`).join("") || "<li>None yet</li>";
+    const inProgressList = inProgress.slice(0, 4).map(t => `<li>${t.name}</li>`).join("") || "<li>None active</li>";
+    const backlogList = backlog.slice(0, 4).map(t => `<li>${t.name}</li>`).join("") || "<li>No risks</li>";
+
+    // Up next: first few pending tasks
+    const upNext = pending.slice(0, 4).map(t => `<li>${t.name}</li>`).join("") || "<li>All tasks assigned</li>";
+
+    const now = new Date();
+    const timestamp = now.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true });
+
+    document.getElementById("summarySection").innerHTML = `
+        <div class="summary-card">
+            <div class="summary-header">
+                <div class="summary-avatar">🤖</div>
+                <div class="summary-header-text">
+                    <h3>AI Project Manager Summary</h3>
+                    <p>Auto-generated from live task data</p>
+                </div>
+                <div class="summary-health ${health}">${healthLabel}</div>
+            </div>
+            <div class="summary-body">
+                <div class="summary-narrative">${narrative}</div>
+                <div class="summary-grid">
+                    <div class="summary-block">
+                        <h4 style="color:var(--emerald);">✓ Completed (${completed.length})</h4>
+                        <ul>${completedList}</ul>
+                    </div>
+                    <div class="summary-block">
+                        <h4 style="color:var(--amber);">● In Progress (${inProgress.length})</h4>
+                        <ul>${inProgressList}</ul>
+                    </div>
+                    <div class="summary-block">
+                        <h4 style="color:var(--red);">⚠ Risks / Backlog (${backlog.length})</h4>
+                        <ul>${backlogList}</ul>
+                    </div>
+                    <div class="summary-block">
+                        <h4 style="color:var(--primary-light);">↗ Up Next</h4>
+                        <ul>${upNext}</ul>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-footer">
+                <div class="summary-timestamp">Generated: ${timestamp}</div>
+                <button class="summary-regen" onclick="renderSummary()">↻ Regenerate</button>
+            </div>
+        </div>
+    `;
+}
+
+// ── Render All ──
+function renderAll() {
+    renderMilestones();
+    renderRiskAlerts();
+    drawDonut();
+    renderMetrics();
+    renderProgressChart();
+    renderSummary();
+    renderDigest();
+    renderUpdates();
+    renderDays();
+    document.getElementById("lastUpdated").textContent = PROJECT.lastUpdated;
+}
+
+// Init
+loadState();
+renderAll();
+</script>
+</body>
+</html>

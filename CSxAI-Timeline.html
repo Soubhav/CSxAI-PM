@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSxAI — 25-Day Project Timeline & Roadmap</title>
+    <style>
+        :root {
+            --bg: #0d0f1a;
+            --card: #151829;
+            --card-hover: #1a1e35;
+            --surface: #1e2240;
+            --border: rgba(255,255,255,0.08);
+            --text: #e2e8f0;
+            --text-muted: #8892b0;
+            --primary: #7c5cfc;
+            --primary-light: #9b7fff;
+            --emerald: #34d399;
+            --amber: #fbbf24;
+            --red: #f87171;
+            --teal: #2dd4bf;
+            --blue: #60a5fa;
+            --violet: #a78bfa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1040 0%, #0d0f1a 50%, #0a1628 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 48px 0 40px;
+            text-align: center;
+        }
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .logo-text span { color: var(--primary-light); }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+        .meta-pills {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .meta-pill {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 8px 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .meta-pill strong { color: var(--text); }
+
+        /* Main */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 32px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 56px;
+        }
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        .summary-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .summary-card .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .summary-card .track-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .summary-card .track-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .track-a .track-name { color: var(--teal); }
+        .track-b .track-name { color: var(--violet); }
+
+        /* Visual Roadmap */
+        .roadmap-visual {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            overflow-x: auto;
+            margin-bottom: 40px;
+        }
+        .roadmap-weeks {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            min-width: 800px;
+        }
+        .week-col {
+            text-align: center;
+        }
+        .week-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+        }
+        .week-days {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .track-block {
+            border-radius: 12px;
+            padding: 14px 10px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: left;
+        }
+        .track-block-a {
+            background: rgba(45, 212, 191, 0.08);
+            border: 1px solid rgba(45, 212, 191, 0.2);
+        }
+        .track-block-b {
+            background: rgba(167, 139, 250, 0.08);
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+        .track-block .block-title {
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .track-block-a .block-title { color: var(--teal); }
+        .track-block-b .block-title { color: var(--violet); }
+        .track-block ul {
+            list-style: none;
+            padding: 0;
+        }
+        .track-block li {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 1px 0;
+        }
+        .demo-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 12px;
+            border-radius: 100px;
+            margin-top: 10px;
+        }
+        .demo-badge.final {
+            background: linear-gradient(135deg, var(--emerald), #059669);
+        }
+
+        /* Week Cards */
+        .week-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        .week-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .week-header-left h3 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .week-header-left .theme {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .week-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-light);
+        }
+        .track-section {
+            padding: 24px 28px;
+        }
+        .track-section + .track-section {
+            border-top: 1px solid var(--border);
+        }
+        .track-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .track-label .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .track-a-label .dot { background: var(--teal); }
+        .track-a-label { color: var(--teal); }
+        .track-b-label .dot { background: var(--violet); }
+        .track-b-label { color: var(--violet); }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            padding: 10px 14px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        th:first-child { border-radius: 8px 0 0 0; }
+        th:last-child { border-radius: 0 8px 0 0; }
+        td {
+            padding: 12px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        td:first-child {
+            font-weight: 600;
+            white-space: nowrap;
+            color: var(--primary-light);
+        }
+        td:nth-child(2) {
+            font-weight: 500;
+        }
+        td:last-child {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: var(--card-hover); }
+
+        /* Milestone */
+        .milestone {
+            background: linear-gradient(135deg, rgba(124, 92, 252, 0.1), rgba(124, 92, 252, 0.05));
+            border: 1px solid rgba(124, 92, 252, 0.25);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 20px 28px 24px;
+        }
+        .milestone-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-light);
+            margin-bottom: 6px;
+        }
+        .milestone-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .milestone-checkpoint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* Feature Matrix */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .matrix-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .matrix-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .matrix-header.a { color: var(--teal); }
+        .matrix-header.b { color: var(--violet); }
+        .matrix-item {
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .matrix-item:last-child { border-bottom: none; }
+        .matrix-num {
+            background: var(--surface);
+            border-radius: 6px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .matrix-content {
+            flex: 1;
+        }
+        .matrix-feature {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .matrix-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .matrix-week {
+            font-size: 11px;
+            color: var(--primary-light);
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+
+        /* Demo Milestones */
+        .demo-timeline {
+            position: relative;
+            padding-left: 32px;
+        }
+        .demo-timeline::before {
+            content: '';
+            position: absolute;
+            left: 11px;
+            top: 8px;
+            bottom: 8px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--emerald));
+            border-radius: 2px;
+        }
+        .demo-item {
+            position: relative;
+            margin-bottom: 24px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+        }
+        .demo-item::before {
+            content: '';
+            position: absolute;
+            left: -27px;
+            top: 24px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg);
+        }
+        .demo-item.final::before {
+            background: var(--emerald);
+            width: 14px;
+            height: 14px;
+            left: -28px;
+        }
+        .demo-item .demo-day {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+        }
+        .demo-item.final .demo-day { color: var(--emerald); }
+        .demo-item .demo-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .demo-item .demo-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Risk + Tech */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .info-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .info-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .info-row {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .info-row:last-child { border-bottom: none; }
+        .info-label {
+            color: var(--text-muted);
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+        .risk-label {
+            color: var(--amber);
+            font-weight: 600;
+            min-width: 200px;
+            flex-shrink: 0;
+        }
+
+        /* Phase Badges */
+        .phases {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 40px;
+        }
+        .phase-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .phase-card .phase-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .phase-card .phase-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--primary-light);
+        }
+        .phase-card .phase-time {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        .phase-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .phase-card li {
+            font-size: 13px;
+            color: var(--text-muted);
+            padding: 3px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+        .phase-card li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.5;
+        }
+
+        /* Week 5 special table */
+        .week5-table td:first-child {
+            color: var(--primary-light);
+        }
+        .week5-table td {
+            font-size: 12px;
+            color: var(--text-muted);
+            vertical-align: top;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 32px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .footer strong { color: var(--text); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .summary-grid, .matrix-grid, .info-grid, .phases {
+                grid-template-columns: 1fr;
+            }
+            .header h1 { font-size: 28px; }
+            .main { padding: 32px 16px; }
+            .track-section { padding: 20px 16px; }
+            .milestone { margin: 16px; }
+        }
+
+        @media print {
+            body { background: white; color: #1a1a1a; }
+            .header { background: #f8f9fa; }
+            .week-card, .summary-card, .info-card, .matrix-card, .phase-card, .demo-item {
+                background: white;
+                border-color: #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-inner">
+        <div class="logo">
+            <div class="logo-icon">&#x1F3A7;</div>
+            <div class="logo-text">CS<span>x</span>AI</div>
+        </div>
+        <h1>25-Day Project Timeline & Roadmap</h1>
+        <p>AI-Powered Member Services Platform for Credit Unions</p>
+        <div class="meta-pills">
+            <div class="meta-pill"><strong>Platform:</strong>&nbsp; CSxAI</div>
+            <div class="meta-pill"><strong>Client:</strong>&nbsp; US Credit Unions</div>
+            <div class="meta-pill"><strong>Duration:</strong>&nbsp; 25 Working Days (5 Weeks)</div>
+            <div class="meta-pill"><strong>Team:</strong>&nbsp; 2-3 AI Engineers</div>
+        </div>
+    </div>
+</div>
+
+<div class="main">
+
+    <!-- EXECUTIVE SUMMARY -->
+    <div class="section">
+        <h2 class="section-title">Executive Summary</h2>
+        <p class="section-subtitle">Two parallel tracks converging into one integrated platform</p>
+        <div class="summary-grid">
+            <div class="summary-card track-a">
+                <div class="label">Track A</div>
+                <div class="track-name">Core Platform</div>
+                <div class="track-desc">Full AI voice agent management system &mdash; dashboard, agent configuration, 8 credit union scenarios, escalation workflows, testing sandbox, monitoring, evaluations, and post-call tools.</div>
+            </div>
+            <div class="summary-card track-b">
+                <div class="label">Track B</div>
+                <div class="track-name">Agent Assist Interface</div>
+                <div class="track-desc">Real-time in-call intelligence panel for human reps &mdash; live transcription, AI objection detection, rebuttal suggestions, CRM intelligence, product recommendations, and post-call automation.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VISUAL ROADMAP -->
+    <div class="section">
+        <h2 class="section-title">Visual Roadmap</h2>
+        <p class="section-subtitle">High-level view of what gets built each week across both tracks</p>
+        <div class="roadmap-visual">
+            <div class="roadmap-weeks">
+                <!-- Week 1 -->
+                <div class="week-col">
+                    <div class="week-label">Week 1</div>
+                    <div class="week-days">Days 1 &ndash; 5</div>
+                    <div class="track-block track-block-a">
+                        <div class="block-title">Track A</div>
+                        <ul>
+                            <li>Dashboard</li>
+                            <li>Insights</li>
+                            <li>KPI Engine</li>
+                        </ul>
+                    </div>
+                    <div class="track-block track-block-b">
+                        <div class="block-title">Track B</div>
+                        <ul>
+                            <li>UI Shell</li>
+                            <li>Layout Design</li>
+                            <li>Live Transcription</li>
+                        </ul>
+                    </div>
+                    <div class="demo-badge">Demo 1</div>
+                </div>
+                <!-- Week 2 -->
+                <div class="week-col">
+                    <div class="week-label">Week 2</div>
+                    <div class="week-days">Days 6 &ndash; 10</div>
+                    <div class="track-block track-block-a">
+                        <div class="block-title">Track A</div>
+                        <ul>
+                            <li>Agent Canvas</li>
+                            <li>8 Scenarios</li>
+                            <li>Escalation Flow</li>
+                        </ul>
+                    </div>
+                    <div class="track-block track-block-b">
+                        <div class="block-title">Track B</div>
+                        <ul>
+                            <li>Objection Detection</li>
+                            <li>AI Rebuttals</li>
+                            <li>Live Call Intel</li>
+                        </ul>
+                    </div>
+                    <div class="demo-badge">Demo 2</div>
+                </div>
+                <!-- Week 3 -->
+                <div class="week-col">
+                    <div class="week-label">Week 3</div>
+                    <div class="week-days">Days 11 &ndash; 15</div>
+                    <div class="track-block track-block-a">
+                        <div class="block-title">Track A</div>
+                        <ul>
+                            <li>Call Logs</li>
+                            <li>Live Monitor</li>
+                            <li>Knowledge Base</li>
+                        </ul>
+                    </div>
+                    <div class="track-block track-block-b">
+                        <div class="block-title">Track B</div>
+                        <ul>
+                            <li>CRM Panel</li>
+                            <li>Customer History</li>
+                            <li>Upsell / Cross-sell</li>
+                        </ul>
+                    </div>
+                    <div class="demo-badge">Demo 3</div>
+                </div>
+                <!-- Week 4 -->
+                <div class="week-col">
+                    <div class="week-label">Week 4</div>
+                    <div class="week-days">Days 16 &ndash; 20</div>
+                    <div class="track-block track-block-a">
+                        <div class="block-title">Track A</div>
+                        <ul>
+                            <li>Sandbox</li>
+                            <li>Evaluations</li>
+                            <li>Tools (Post-Call)</li>
+                        </ul>
+                    </div>
+                    <div class="track-block track-block-b">
+                        <div class="block-title">Track B</div>
+                        <ul>
+                            <li>Product Recs</li>
+                            <li>Rec Engine UI</li>
+                            <li>Post-Call Intel</li>
+                        </ul>
+                    </div>
+                    <div class="demo-badge">Demo 4</div>
+                </div>
+                <!-- Week 5 -->
+                <div class="week-col">
+                    <div class="week-label">Week 5</div>
+                    <div class="week-days">Days 21 &ndash; 25</div>
+                    <div class="track-block track-block-a">
+                        <div class="block-title">Track A</div>
+                        <ul>
+                            <li>Integration</li>
+                            <li>Polish</li>
+                            <li>Demo Prep</li>
+                        </ul>
+                    </div>
+                    <div class="track-block track-block-b">
+                        <div class="block-title">Track B</div>
+                        <ul>
+                            <li>Integration</li>
+                            <li>Polish</li>
+                            <li>Demo Prep</li>
+                        </ul>
+                    </div>
+                    <div class="demo-badge final">Final Demo</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEEK 1 -->
+    <div class="section">
+        <h2 class="section-title">Week-by-Week Breakdown</h2>
+        <p class="section-subtitle">Detailed day-by-day deliverables for each track</p>
+
+        <div class="week-card">
+            <div class="week-header">
+                <div class="week-header-left">
+                    <h3>Week 1 &mdash; Foundation & Analytics</h3>
+                    <div class="theme">Build the command center and establish the design system</div>
+                </div>
+                <div class="week-badge">Days 1 &ndash; 5</div>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-a-label"><span class="dot"></span> Track A &mdash; Core Platform</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Project scaffold + Design system</td><td>Next.js 16 setup, Tailwind v4 dark theme, shadcn/ui config, sidebar navigation (7 sections), Giga.ml color palette, component patterns</td></tr>
+                        <tr><td>2</td><td>Dashboard &mdash; KPI layer</td><td>6 KPI cards (AI Calls Handled, Resolution Rate, Escalation Rate, Hours Saved, NPS, FCR), time-based greeting, filter pills (Voice / Date / Scenario)</td></tr>
+                        <tr><td>3</td><td>Dashboard &mdash; Visualizations</td><td>Weekly call volume bar chart (AI vs Human), sentiment gauge (SVG semicircle), 5 secondary metrics (Escalation Quality, Avg Handle Time, CES, Abandonment, Repeat Rate)</td></tr>
+                        <tr><td>4</td><td>Dashboard &mdash; Intelligence</td><td>Quick Insights grid (6 actionable cards), call volume heatmap (day x hour), responsive layout polish</td></tr>
+                        <tr><td>5</td><td>Insights page</td><td>Waterfall chart (73.2% &rarr; 86.6%), 4 summary cards, 6 ranked opportunities with impact %, effort badges, clickable detail modals</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-b-label"><span class="dot"></span> Track B &mdash; Agent Assist Interface</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1-2</td><td>UI architecture + Design</td><td>Agent Assist panel layout (split-screen), component library, real-time state management architecture, WebSocket structure</td></tr>
+                        <tr><td>3-4</td><td>Panel shell + Mock data</td><td>Tabbed intelligence panels (Live Call / CRM / Products / Post-Call), mock CRM data, mock product catalog, responsive resizing</td></tr>
+                        <tr><td>5</td><td>Live transcription UI</td><td>Real-time transcript display (chat-bubble + timestamps), speaker ID (Rep vs Member), auto-scroll with manual override</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="milestone">
+                <div class="milestone-label">Demo 1 &mdash; End of Day 5</div>
+                <div class="milestone-text">Dashboard with full KPIs + Insights waterfall + Agent Assist panel shell with live transcript UI</div>
+                <div class="milestone-checkpoint">Checkpoint: Client reviews dashboard analytics and Agent Assist layout direction</div>
+            </div>
+        </div>
+
+        <!-- WEEK 2 -->
+        <div class="week-card">
+            <div class="week-header">
+                <div class="week-header-left">
+                    <h3>Week 2 &mdash; Agent Configuration & Live Intelligence</h3>
+                    <div class="theme">Build the agent brain and real-time call intelligence</div>
+                </div>
+                <div class="week-badge">Days 6 &ndash; 10</div>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-a-label"><span class="dot"></span> Track A &mdash; Core Platform</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>6</td><td>Agent Canvas &mdash; List view</td><td>Agent table (Voice/Chat/Multi-modal badges), status indicators, resolution rate + FCR per agent, "New Agent" creation modal</td></tr>
+                        <tr><td>7</td><td>Agent Canvas &mdash; Policy tree (Pt 1)</td><td>Two-panel layout, Overview section, System Prompt editor with version tracking, Rules section, Guardrails aggregated view</td></tr>
+                        <tr><td>8</td><td>Agent Canvas &mdash; Policy tree (Pt 2)</td><td>Escalation Flow config (4 triggers, 3 transfers, 3 priorities), per-scenario section, Knowledge linking, agent metadata bar</td></tr>
+                        <tr><td>9</td><td>8 Credit Union Scenarios</td><td>Transaction Inquiry, Account Balance, Loan Status, Payment Due Date, Card Issues, Routing Numbers, CD Rates, Loan Payoff &mdash; each with prompts, guardrails, escalation, tools</td></tr>
+                        <tr><td>10</td><td>Escalation Workflow</td><td>4 triggers per scenario, warm/cold/priority transfers, after-hours rules, agent brief template, queue overflow, urgent alerts</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-b-label"><span class="dot"></span> Track B &mdash; Agent Assist Interface</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>6-7</td><td>AI Objection Detection</td><td>Real-time intent analysis, objection classification (price, timing, competitor, trust, feature), visual alerts in transcript</td></tr>
+                        <tr><td>8-9</td><td>AI Rebuttal Suggestions</td><td>Context-aware rebuttal engine, confidence scores, one-click copy, rebuttal history, 3-5 templates per objection type</td></tr>
+                        <tr><td>10</td><td>Live Call Intelligence</td><td>Unified real-time flow (transcription + objections + rebuttals), call timer + status bar, latency optimization</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="milestone">
+                <div class="milestone-label">Demo 2 &mdash; End of Day 10</div>
+                <div class="milestone-text">Full Agent Canvas with 8 scenarios + escalation config + Live Call Intelligence panel</div>
+                <div class="milestone-checkpoint">Checkpoint: Client reviews agent configuration workflow and live call intelligence</div>
+            </div>
+        </div>
+
+        <!-- WEEK 3 -->
+        <div class="week-card">
+            <div class="week-header">
+                <div class="week-header-left">
+                    <h3>Week 3 &mdash; Monitoring, CRM & Call History</h3>
+                    <div class="theme">Visibility into operations and customer intelligence</div>
+                </div>
+                <div class="week-badge">Days 11 &ndash; 15</div>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-a-label"><span class="dot"></span> Track A &mdash; Core Platform</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>11</td><td>Call Logs &mdash; Table + Filters</td><td>Summary cards (Total/Successful/Partial/Failed), filterable table, member search, scenario + escalation filters, pagination, sorting</td></tr>
+                        <tr><td>12</td><td>Call Logs &mdash; Detail Drawer</td><td>Slide-out panel with signal scores, AI summary, full transcript, recording player (waveform), tools used, NPS score</td></tr>
+                        <tr><td>13</td><td>Call Logs &mdash; Escalation Timeline</td><td>When triggered, path taken, wait time, human agent outcome, full call journey visualization</td></tr>
+                        <tr><td>14</td><td>Live Monitor</td><td>3-column active call grid, green glow (active) / amber (testing), per-call info, sentiment indicator, session stats</td></tr>
+                        <tr><td>15</td><td>Knowledge Base</td><td>Drag-and-drop upload, 6 demo documents, search + filter, scenario linking, stats (Total/Linked/Unlinked)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-b-label"><span class="dot"></span> Track B &mdash; Agent Assist Interface</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>11-12</td><td>CRM Intelligence &mdash; Data</td><td>CRM data pull (mock backend), customer profile card, account summary (products, balances, recent activity)</td></tr>
+                        <tr><td>13</td><td>CRM Intelligence &mdash; History</td><td>Last 10 interactions, previous issues + resolutions, satisfaction trend, communication preferences</td></tr>
+                        <tr><td>14</td><td>Upsell / Cross-sell Engine</td><td>Product recommendation logic, propensity score per product (0-100%), visual propensity bar + confidence indicator</td></tr>
+                        <tr><td>15</td><td>CRM Panel &mdash; Integration</td><td>Unified CRM panel (profile + history + upsell), real-time refresh, state persistence, loading + error handling</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="milestone">
+                <div class="milestone-label">Demo 3 &mdash; End of Day 15</div>
+                <div class="milestone-text">Call Logs + Live Monitor + Knowledge Base + CRM Intelligence Panel with history and upsell scores</div>
+                <div class="milestone-checkpoint">Checkpoint: Client reviews monitoring capabilities and CRM intelligence</div>
+            </div>
+        </div>
+
+        <!-- WEEK 4 -->
+        <div class="week-card">
+            <div class="week-header">
+                <div class="week-header-left">
+                    <h3>Week 4 &mdash; Testing, Tools & Product Intelligence</h3>
+                    <div class="theme">Quality assurance, post-call automation, and AI product recommendations</div>
+                </div>
+                <div class="week-badge">Days 16 &ndash; 20</div>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-a-label"><span class="dot"></span> Track A &mdash; Core Platform</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>16</td><td>Sandbox &mdash; Layout + Config</td><td>Scenario selector, prompt editor tab, guardrails toggle, chat simulation panel, reset conversation, mic placeholder</td></tr>
+                        <tr><td>17</td><td>Sandbox &mdash; Test Scripts</td><td>5 pre-built scripts (happy path, fraud, angry member, edge case, guardrail), per-response metrics, mock AI responses</td></tr>
+                        <tr><td>18</td><td>Evaluations</td><td>8 test cases, pass/fail with expected vs actual, trend chart (color-coded), 5 historical runs, Run All + individual buttons</td></tr>
+                        <tr><td>19</td><td>Tools (Post-Call Actions)</td><td>SMS/Email/Payoff Letter, enable/disable + scenario assignment, template editor with variables, fulfillment partner</td></tr>
+                        <tr><td>20</td><td>Version History + Metadata</td><td>Prompt versions with resolution rate correlation, rollback, "Last locked by", remaining memory, dev mode toggle</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="track-section">
+                <div class="track-label track-b-label"><span class="dot"></span> Track B &mdash; Agent Assist Interface</div>
+                <table>
+                    <thead>
+                        <tr><th>Day</th><th>Deliverable</th><th>Engineering Tasks</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>16-17</td><td>Real-Time Product Recs</td><td>Conversation analysis engine (mock NLP), product catalog (checking, savings, CDs, loans, cards), live-updating suggestions</td></tr>
+                        <tr><td>18</td><td>Product Recommendation UI</td><td>Product cards (name, match reason, propensity, selling points, talking points), priority ranking, dismiss/pin actions</td></tr>
+                        <tr><td>19-20</td><td>Post-Call Intelligence</td><td>Auto call summary, action items + assignees, follow-up tasks, structured CRM notes, sales insights + next-best-action</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="milestone">
+                <div class="milestone-label">Demo 4 &mdash; End of Day 20</div>
+                <div class="milestone-text">Complete Core Platform (all 11 features) + Real-Time Product Recs + Post-Call Intelligence</div>
+                <div class="milestone-checkpoint">Checkpoint: Client reviews full platform functionality and Agent Assist quality</div>
+            </div>
+        </div>
+
+        <!-- WEEK 5 -->
+        <div class="week-card">
+            <div class="week-header">
+                <div class="week-header-left">
+                    <h3>Week 5 &mdash; Integration, Polish & Client Demo</h3>
+                    <div class="theme">Connect both tracks, polish the experience, and deliver</div>
+                </div>
+                <div class="week-badge">Days 21 &ndash; 25</div>
+            </div>
+            <div class="track-section">
+                <table class="week5-table">
+                    <thead>
+                        <tr><th>Day</th><th style="color: #2dd4bf;">Track A</th><th style="color: #a78bfa;">Track B</th><th>Joint</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>21</td>
+                            <td>Cross-page navigation, loading states, empty states, error boundaries</td>
+                            <td>Agent Assist &harr; Core Platform data bridge, shared call context</td>
+                            <td>Integration testing &mdash; both tracks sharing data</td>
+                        </tr>
+                        <tr>
+                            <td>22</td>
+                            <td>Dashboard updates from Assist data, Call Logs enriched with Assist insights</td>
+                            <td>Post-call data auto-populates CRM notes, summaries, follow-ups</td>
+                            <td>End-to-end call flow validation</td>
+                        </tr>
+                        <tr>
+                            <td>23</td>
+                            <td>Performance optimization, responsive audit, accessibility</td>
+                            <td>Responsive panels, keyboard shortcuts for reps</td>
+                            <td>Full regression testing (11 core + 4 Assist modules)</td>
+                        </tr>
+                        <tr>
+                            <td>24</td>
+                            <td>Demo data seeding (Lakeside CU), demo script walkthrough</td>
+                            <td>Live call simulation demos, CRM lookup, product recs</td>
+                            <td>Dry run of full client demo</td>
+                        </tr>
+                        <tr>
+                            <td>25</td>
+                            <td>Final bug fixes + documentation</td>
+                            <td>Final bug fixes + documentation</td>
+                            <td style="font-weight: 600; color: #34d399;">CLIENT DEMO &mdash; Full platform walkthrough</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="milestone" style="border-color: rgba(52, 211, 153, 0.3); background: linear-gradient(135deg, rgba(52, 211, 153, 0.1), rgba(52, 211, 153, 0.03));">
+                <div class="milestone-label" style="color: #34d399;">Final Demo &mdash; Day 25</div>
+                <div class="milestone-text">Complete CSxAI platform &mdash; Core Management System + Agent Assist Interface &mdash; fully integrated, polished, and ready for client review</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURE MATRIX -->
+    <div class="section">
+        <h2 class="section-title">Complete Feature Matrix</h2>
+        <p class="section-subtitle">All 21 features across both tracks</p>
+        <div class="matrix-grid">
+            <div class="matrix-card">
+                <div class="matrix-header a">Track A &mdash; Core Platform (11 Features)</div>
+                <div class="matrix-item"><div class="matrix-num">1</div><div class="matrix-content"><div class="matrix-feature">Dashboard</div><div class="matrix-desc">6 KPIs, call volume chart, sentiment gauge, heatmap, quick insights</div></div><div class="matrix-week">W1</div></div>
+                <div class="matrix-item"><div class="matrix-num">2</div><div class="matrix-content"><div class="matrix-feature">Insights</div><div class="matrix-desc">Waterfall chart, 6 improvement opportunities, effort/impact ranking</div></div><div class="matrix-week">W1</div></div>
+                <div class="matrix-item"><div class="matrix-num">3</div><div class="matrix-content"><div class="matrix-feature">Agent Canvas</div><div class="matrix-desc">Policy tree, system prompt editor, rules, guardrails, version history</div></div><div class="matrix-week">W2</div></div>
+                <div class="matrix-item"><div class="matrix-num">4</div><div class="matrix-content"><div class="matrix-feature">8 Credit Union Scenarios</div><div class="matrix-desc">Individual prompts, guardrails, escalation, tools per scenario</div></div><div class="matrix-week">W2</div></div>
+                <div class="matrix-item"><div class="matrix-num">5</div><div class="matrix-content"><div class="matrix-feature">Escalation Workflow</div><div class="matrix-desc">4 triggers, 3 transfer types, after-hours, agent briefs, queue overflow</div></div><div class="matrix-week">W2</div></div>
+                <div class="matrix-item"><div class="matrix-num">6</div><div class="matrix-content"><div class="matrix-feature">Call Logs</div><div class="matrix-desc">Filterable table, detail drawer, signal scores, transcript, recording</div></div><div class="matrix-week">W3</div></div>
+                <div class="matrix-item"><div class="matrix-num">7</div><div class="matrix-content"><div class="matrix-feature">Live Monitor</div><div class="matrix-desc">Real-time call grid, status indicators, sentiment, session stats</div></div><div class="matrix-week">W3</div></div>
+                <div class="matrix-item"><div class="matrix-num">8</div><div class="matrix-content"><div class="matrix-feature">Knowledge Base</div><div class="matrix-desc">Document upload, search, scenario linking, 6 demo docs</div></div><div class="matrix-week">W3</div></div>
+                <div class="matrix-item"><div class="matrix-num">9</div><div class="matrix-content"><div class="matrix-feature">Sandbox</div><div class="matrix-desc">Scenario testing, prompt editing, 5 test scripts, per-response metrics</div></div><div class="matrix-week">W4</div></div>
+                <div class="matrix-item"><div class="matrix-num">10</div><div class="matrix-content"><div class="matrix-feature">Evaluations</div><div class="matrix-desc">8 test cases, pass/fail tracking, trend chart, historical runs</div></div><div class="matrix-week">W4</div></div>
+                <div class="matrix-item"><div class="matrix-num">11</div><div class="matrix-content"><div class="matrix-feature">Tools</div><div class="matrix-desc">SMS/Email/Mail post-call actions, templates, scenario assignment</div></div><div class="matrix-week">W4</div></div>
+            </div>
+            <div class="matrix-card">
+                <div class="matrix-header b">Track B &mdash; Agent Assist (10 Features)</div>
+                <div class="matrix-item"><div class="matrix-num">1</div><div class="matrix-content"><div class="matrix-feature">Live Transcription</div><div class="matrix-desc">Real-time transcript, speaker ID, auto-scroll</div></div><div class="matrix-week">W1</div></div>
+                <div class="matrix-item"><div class="matrix-num">2</div><div class="matrix-content"><div class="matrix-feature">AI Objection Detection</div><div class="matrix-desc">Real-time intent analysis, objection classification</div></div><div class="matrix-week">W2</div></div>
+                <div class="matrix-item"><div class="matrix-num">3</div><div class="matrix-content"><div class="matrix-feature">AI Rebuttal Suggestions</div><div class="matrix-desc">Context-aware responses, confidence scores, one-click copy</div></div><div class="matrix-week">W2</div></div>
+                <div class="matrix-item"><div class="matrix-num">4</div><div class="matrix-content"><div class="matrix-feature">Live Call Intelligence</div><div class="matrix-desc">Unified real-time flow: transcription + objections + rebuttals</div></div><div class="matrix-week">W2</div></div>
+                <div class="matrix-item"><div class="matrix-num">5</div><div class="matrix-content"><div class="matrix-feature">CRM Intelligence &mdash; Profile</div><div class="matrix-desc">Customer profile, account summary, lifetime value</div></div><div class="matrix-week">W3</div></div>
+                <div class="matrix-item"><div class="matrix-num">6</div><div class="matrix-content"><div class="matrix-feature">CRM Intelligence &mdash; History</div><div class="matrix-desc">Interaction history, previous issues, satisfaction trend</div></div><div class="matrix-week">W3</div></div>
+                <div class="matrix-item"><div class="matrix-num">7</div><div class="matrix-content"><div class="matrix-feature">Upsell / Cross-sell</div><div class="matrix-desc">Propensity scores, product recommendations with reasoning</div></div><div class="matrix-week">W3</div></div>
+                <div class="matrix-item"><div class="matrix-num">8</div><div class="matrix-content"><div class="matrix-feature">Real-Time Product Recs</div><div class="matrix-desc">Conversation-driven suggestions, live updates</div></div><div class="matrix-week">W4</div></div>
+                <div class="matrix-item"><div class="matrix-num">9</div><div class="matrix-content"><div class="matrix-feature">Product Rec UI</div><div class="matrix-desc">Cards, talking points, priority ranking, dismiss/pin</div></div><div class="matrix-week">W4</div></div>
+                <div class="matrix-item"><div class="matrix-num">10</div><div class="matrix-content"><div class="matrix-feature">Post-Call Intelligence</div><div class="matrix-desc">Auto summary, action items, follow-ups, CRM notes, sales insights</div></div><div class="matrix-week">W4</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEMO MILESTONES -->
+    <div class="section">
+        <h2 class="section-title">Demo Milestones</h2>
+        <p class="section-subtitle">5 client touchpoints to review progress and provide feedback</p>
+        <div class="demo-timeline">
+            <div class="demo-item">
+                <div class="demo-day">Demo 1 &mdash; Day 5</div>
+                <div class="demo-title">Dashboard + Insights + Agent Assist Shell</div>
+                <div class="demo-desc">"Here's your command center and where your reps will work"</div>
+            </div>
+            <div class="demo-item">
+                <div class="demo-day">Demo 2 &mdash; Day 10</div>
+                <div class="demo-title">Agent Canvas + 8 Scenarios + Live Call Intelligence</div>
+                <div class="demo-desc">"Here's how you configure AI agents and how reps get real-time help"</div>
+            </div>
+            <div class="demo-item">
+                <div class="demo-day">Demo 3 &mdash; Day 15</div>
+                <div class="demo-title">Call Logs + Live Monitor + Knowledge Base + CRM Panel</div>
+                <div class="demo-desc">"Here's full operational visibility and customer intelligence"</div>
+            </div>
+            <div class="demo-item">
+                <div class="demo-day">Demo 4 &mdash; Day 20</div>
+                <div class="demo-title">Sandbox + Evaluations + Tools + Product Recs + Post-Call</div>
+                <div class="demo-desc">"Here's quality assurance, post-call automation, and AI selling"</div>
+            </div>
+            <div class="demo-item final">
+                <div class="demo-day">Final Demo &mdash; Day 25</div>
+                <div class="demo-title">Full Integrated Platform &mdash; Both Tracks</div>
+                <div class="demo-desc">"Here's your complete AI-powered member services platform"</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RISK + TECH -->
+    <div class="section">
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Risk Mitigation</h4>
+                <div class="info-row"><div class="risk-label">Week 2 scope is heavy</div><div>Version history can move to Week 4 if needed</div></div>
+                <div class="info-row"><div class="risk-label">Real-time architecture dependency</div><div>WebSocket structure built first (Days 1-2 Track B)</div></div>
+                <div class="info-row"><div class="risk-label">Integration surprises in Week 5</div><div>Continuous touch-points at each weekly demo</div></div>
+                <div class="info-row"><div class="risk-label">Small team bandwidth</div><div>Tracks A & B split across engineers, independent until Week 5</div></div>
+            </div>
+            <div class="info-card">
+                <h4>Tech Stack</h4>
+                <div class="info-row"><div class="info-label">Framework</div><div>Next.js 16 (App Router, TypeScript)</div></div>
+                <div class="info-row"><div class="info-label">Styling</div><div>Tailwind CSS v4 + shadcn/ui (dark theme)</div></div>
+                <div class="info-row"><div class="info-label">Charts</div><div>Recharts (bar, waterfall, trend, gauge)</div></div>
+                <div class="info-row"><div class="info-label">Real-time</div><div>WebSocket architecture (mock in Phase 1)</div></div>
+                <div class="info-row"><div class="info-label">State</div><div>React useState / Context</div></div>
+                <div class="info-row"><div class="info-label">Icons</div><div>lucide-react</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WHAT'S NEXT -->
+    <div class="section">
+        <h2 class="section-title">What Comes After Day 25</h2>
+        <p class="section-subtitle">Future phases for backend integration and production deployment</p>
+        <div class="phases">
+            <div class="phase-card">
+                <div class="phase-label">Phase 2</div>
+                <div class="phase-name">Backend Integration</div>
+                <div class="phase-time">Weeks 6 &ndash; 10</div>
+                <ul>
+                    <li>Real telephony (Twilio / Vapi)</li>
+                    <li>Live CRM sync</li>
+                    <li>Real-time transcription API</li>
+                    <li>LLM-powered rebuttals</li>
+                </ul>
+            </div>
+            <div class="phase-card">
+                <div class="phase-label">Phase 3</div>
+                <div class="phase-name">Production</div>
+                <div class="phase-time">Weeks 11 &ndash; 15</div>
+                <ul>
+                    <li>Claude Haiku / Sonnet backend</li>
+                    <li>RAG pipeline over knowledge docs</li>
+                    <li>Multi-tenant support</li>
+                    <li>Role-based access control (RBAC)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <strong>CSxAI</strong> &mdash; AI-Powered Member Services for Credit Unions<br>
+    Built with Next.js 16 &bull; TypeScript &bull; Tailwind CSS v4 &bull; shadcn/ui
+</div>
+
+</body>
+</html>
