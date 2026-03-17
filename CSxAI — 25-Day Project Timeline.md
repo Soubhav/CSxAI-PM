@@ -60,13 +60,13 @@ TRACK B — AGENT ASSIST INTERFACE
 
 #### Track A — Core Platform
 
-| Day | Deliverable | Engineering Tasks |
-|-----|-------------|-------------------|
-| **1** | Project scaffold + Design system | Next.js 16 setup, Tailwind v4 dark theme, shadcn/ui config, sidebar navigation (7 sections), Giga.ml color palette, component patterns |
-| **2** | Dashboard — KPI layer | 6 KPI cards (AI Calls Handled, Resolution Rate, Escalation Rate, Hours Saved, NPS, FCR), time-based greeting ("Good afternoon, Lakeside CU"), filter pills (Voice / Date / Scenario) |
-| **3** | Dashboard — Visualization layer | Weekly call volume bar chart (AI vs Human — Recharts), sentiment gauge (SVG semicircle), 5 secondary metrics (Escalation Quality, Avg Handle Time, CES, Abandonment, Repeat Rate) |
-| **4** | Dashboard — Intelligence layer | Quick Insights grid (6 actionable cards), call volume heatmap (day x hour grid), responsive layout polish |
-| **5** | Insights page | Waterfall chart (73.2% → 86.6%), 4 summary cards, 6 ranked improvement opportunities with impact %, effort badges (Low/Med/High), clickable bars → detail modal with recommendations |
+| Day | Deliverable | What This Means |
+|-----|-------------|-----------------|
+| **1** | Project scaffold + Design system | Set up the app's overall structure, navigation menu with 7 sections, and visual style (dark theme with Giga.ml branding) so every page looks and feels consistent from day one |
+| **2** | Dashboard — KPI layer | The main dashboard shows 6 key metrics at a glance — AI Calls Handled, Resolution Rate, Escalation Rate, Hours Saved, NPS, and First-Call Resolution — with a personalized greeting and filters for voice type, date range, and scenario (CSX-37, CSX-40, CSX-39, CSX-41, CSX-78) |
+| **3** | Dashboard — Visualization layer | Add a weekly bar chart comparing AI-handled calls vs. human-handled calls, a sentiment gauge showing overall caller mood, and 5 supporting metrics so leadership can spot trends visually (CSX-37) |
+| **4** | Dashboard — Intelligence layer | Add a grid of 6 quick-insight cards with actionable recommendations, plus a heatmap showing call volume by day and hour so managers can see when the busiest periods are and staff accordingly (CSX-38, CSX-42) |
+| **5** | Insights page | A dedicated page showing how AI resolution improved from 73.2% to 86.6% over time, 4 summary cards with top-level stats, and a ranked list of 6 improvement opportunities — each tagged with expected impact and effort level |
 
 #### Track B — Agent Assist Interface
 
@@ -90,13 +90,13 @@ TRACK B — AGENT ASSIST INTERFACE
 
 #### Track A — Core Platform
 
-| Day | Deliverable | Engineering Tasks |
-|-----|-------------|-------------------|
-| **6** | Agent Canvas — List view | Agent table (Voice/Chat/Multi-modal badges), status indicators (Active/Testing/Inactive), resolution rate + FCR per agent, "New Agent" creation modal with type selector |
-| **7** | Agent Canvas — Policy tree (Part 1) | Two-panel layout (left tree + right content), Overview section, System Prompt editor with version tracking, Rules section (cross-agent guidelines), Guardrails aggregated view |
-| **8** | Agent Canvas — Policy tree (Part 2) | Escalation Flow config (4 trigger types, 3 transfer types, 3 priority levels), per-scenario section (prompt, guardrails, tools, metrics), Knowledge linking, agent metadata bar |
-| **9** | 8 Credit Union Scenarios | Configure all 8 scenarios with individual prompts, guardrails, escalation rules, and tools: Transaction Inquiry, Account Balance, Loan Status, Payment Due Date, Card Issue & Disputes, Routing & Account Numbers, CD & Savings Rates, Loan Payoff Quote |
-| **10** | Escalation Workflow | 4 escalation triggers per scenario, warm/cold/priority transfer config, after-hours rules (callback, alert on-call, voicemail), agent brief template, queue overflow config, urgent alert toggle |
+| Day | Deliverable | What This Means |
+|-----|-------------|-----------------|
+| **6** | Agent Canvas — List view | An overview page listing all AI agents, showing each agent's type (Voice, Chat, or Multi-modal), current status (Active, Testing, or Inactive), and performance stats like resolution rate — plus a button to create a new agent (CSX-43) |
+| **7** | Agent Canvas — Policy tree (Part 1) | A two-panel agent settings screen: the left side shows a navigation tree of the agent's configuration sections, and the right side lets admins view and edit the agent's overview, system instructions (with version history), rules, and safety guardrails (CSX-45, CSX-44) |
+| **8** | Agent Canvas — Policy tree (Part 2) | Admins can configure when and how the AI escalates to a human — choosing from 4 trigger types, 3 transfer methods, and 3 priority levels. Each scenario gets its own prompt, guardrails, tools, metrics, and linked knowledge articles (CSX-45, CSX-44, CSX-49, CSX-81) |
+| **9** | 8 Credit Union Scenarios | Set up all 8 credit union use cases (e.g., Transaction Inquiry, Card Management, Loan Application) — each with its own AI instructions, safety guardrails, escalation rules, and connected tools (CSX-65, CSX-66, CSX-67, CSX-46) |
+| **10** | Escalation Workflow | Define exactly what triggers a handoff to a human agent for each scenario — including 4 trigger conditions, warm vs. cold transfer options, priority routing, and after-hours rules so calls are never dropped (CSX-81) |
 
 #### Track B — Agent Assist Interface
 
@@ -120,13 +120,13 @@ TRACK B — AGENT ASSIST INTERFACE
 
 #### Track A — Core Platform
 
-| Day | Deliverable | Engineering Tasks |
-|-----|-------------|-------------------|
-| **11** | Call Logs — Table + Filters | Summary cards (Total/Successful/Partial/Failed), filterable table (member search, scenario filter, escalation filter), pagination, sort by date/duration/score |
-| **12** | Call Logs — Detail Drawer | Slide-out panel with signal scores (Resolution/Sentiment/Efficiency), overall score (0-10), AI-generated summary, full transcript (chat-bubble + timestamps), recording player (waveform), tools used, NPS score |
-| **13** | Call Logs — Escalation Timeline | Escalation detail view: when triggered, which path taken, wait time, human agent outcome, full call journey visualization |
-| **14** | Live Monitor | 3-column card grid for active calls, green glow (in-progress) vs amber (testing), per-call info (member, scenario, elapsed time, sentiment), session summary stats, "Listen In" button (Phase 2 placeholder) |
-| **15** | Knowledge Base | Drag-and-drop upload zone, 6 demo documents (Member Services Policy, Rate Sheet, Loan FAQ, Fraud Procedures, Wire Instructions, Digital Banking Troubleshooting), search + filter, scenario linking, stats (Total/Linked/Unlinked) |
+| Day | Deliverable | What This Means |
+|-----|-------------|-----------------|
+| **11** | Call Logs — Table + Filters | A searchable, sortable list of all past calls with summary stats at the top, plus filters to search by member name, scenario type, or escalation status so supervisors can quickly find any call (CSX-55, CSX-56, CSX-76) |
+| **12** | Call Logs — Detail Drawer | Clicking a call opens a side panel showing signal scores, an overall quality score, an AI-generated summary of the call, the full transcript, a recording player, tools used, and the member's NPS rating — everything a reviewer needs in one place (CSX-57, CSX-58, CSX-59) |
+| **13** | Call Logs — Escalation Timeline | For escalated calls, a visual timeline showing exactly when the escalation was triggered, which path was taken, how long the member waited, and what happened once the human agent took over — a full journey view of the handoff (CSX-81) |
+| **14** | Live Monitor | A real-time view of all active calls displayed as cards in a 3-column grid, showing per-call details and overall session stats, with a "Listen In" button so supervisors can monitor any live conversation (CSX-60, CSX-61, CSX-62) |
+| **15** | Knowledge Base | A central document library where admins can drag and drop files to upload, browse 6 pre-loaded demo documents, search and filter content, link documents to specific scenarios, and view usage stats (CSX-50, CSX-52, CSX-49, CSX-79, CSX-75) |
 
 #### Track B — Agent Assist Interface
 
@@ -151,13 +151,13 @@ TRACK B — AGENT ASSIST INTERFACE
 
 #### Track A — Core Platform
 
-| Day | Deliverable | Engineering Tasks |
-|-----|-------------|-------------------|
-| **16** | Sandbox — Layout + Config | Left panel (scenario selector, prompt editor tab, guardrails toggle tab), right panel (chat simulation), reset conversation, mic button placeholder |
-| **17** | Sandbox — Test Scripts + Metrics | 5 pre-built test scripts (happy path, fraud escalation, angry member, edge case, guardrail test), per-response metrics (Resolution %, Guardrail Violations, Latency ms), mock AI response cycling |
-| **18** | Evaluations | 8 test cases across scenarios, pass/fail per test (expected vs actual), pass rate trend chart (color-coded thresholds), 5 historical test suite runs, "Run All Tests" + individual run buttons, summary cards |
-| **19** | Tools (Post-Call Actions) | 3 tools (SMS Summary, Email Summary, Payoff Letter), per-tool enable/disable + scenario assignment, template editor with variables ({{member_name}}, {{summary}}, {{scenario}}), fulfillment partner selection |
-| **20** | Version History + Agent Metadata | All prompt versions with resolution rate correlation, rollback capability, "Last locked by" indicator, remaining memory gauge, dev mode toggle, test cases inside Agent Canvas |
+| Day | Deliverable | What This Means |
+|-----|-------------|-----------------|
+| **16** | Sandbox — Layout + Config | A testing playground where admins pick a scenario, edit the AI's prompt, toggle guardrails on or off, and then run a simulated conversation via text chat or voice — with a reset button to start fresh (CSX-53, CSX-54) |
+| **17** | Sandbox — Test Scripts + Metrics | 5 ready-made test conversations admins can run with one click (happy path, fraud escalation, angry member, edge case, guardrail test), with real-time scoring after each AI response showing resolution rate, guardrail violations, and response speed (CSX-53, CSX-54) |
+| **18** | Evaluations | A test suite of 8 predefined test cases that run against the AI agent, showing pass/fail results for each, an overall pass rate trend chart, and a history of the last 5 test runs — plus a "Run All Tests" button to validate changes quickly |
+| **19** | Tools (Post-Call Actions) | Configure 3 automated follow-up actions — SMS Summary, Email Summary, and Payoff Letter — with the ability to enable or disable each one, assign them to specific scenarios, edit message templates, and select which fulfillment partner handles delivery (CSX-63) |
+| **20** | Version History + Agent Metadata | View every past version of an agent's prompt alongside its resolution rate at that time, roll back to any previous version with one click, see who last locked the configuration, monitor memory usage, and toggle developer mode (CSX-45) |
 
 #### Track B — Agent Assist Interface
 
@@ -181,11 +181,11 @@ TRACK B — AGENT ASSIST INTERFACE
 
 | Day | Track A — Core Platform | Track B — Agent Assist | Joint |
 |-----|------------------------|----------------------|-------|
-| **21** | Cross-page navigation polish, loading states, empty states, error boundaries | Agent Assist ↔ Core Platform data bridge (shared call context, CRM data flows into Call Logs) | Integration testing — both tracks sharing data correctly |
-| **22** | Dashboard real-time updates from Agent Assist data, Call Logs enriched with Agent Assist insights (rebuttals used, products recommended) | Post-call data → auto-populates CRM notes, summary, follow-ups in Core Platform tools | End-to-end call flow: incoming call → Agent Assist live panel → call ends → post-call auto-generation → Call Logs entry |
-| **23** | Performance optimization (lazy loading, code splitting), responsive design audit, accessibility pass | Agent Assist panel responsive behavior (collapsible panels, mobile-friendly), keyboard shortcuts for reps | Full regression testing across all 11 core features + 4 Agent Assist modules |
-| **24** | Demo data seeding (realistic Lakeside CU data across all screens), demo script walkthrough, edge case fixes | Demo scenarios: live call simulation with objection detection, CRM lookup, product recs, post-call generation | Dry run of full client demo (both tracks) |
-| **25** | Final bug fixes, documentation | Final bug fixes, documentation | **CLIENT DEMO** — Full platform walkthrough |
+| **21** | Make sure navigation between all pages is smooth, with proper loading indicators, empty-state messages, and friendly error screens | Connect Agent Assist and Core Platform so they share call context and CRM data flows into Call Logs | Integration testing — verify both tracks share data correctly |
+| **22** | Dashboard updates in real time with Agent Assist data; Call Logs show AI insights like rebuttals used and products recommended (CSX-37, CSX-78, CSX-80) | Post-call data auto-populates CRM notes, summary, and follow-ups in Core Platform tools | End-to-end call flow: incoming call → Agent Assist live panel → call ends → post-call auto-generation → Call Logs entry |
+| **23** | Speed up page loads, verify the app works on tablets and smaller screens, and ensure accessibility for all users | Agent Assist panel works on smaller screens with collapsible panels and keyboard shortcuts for reps | Full regression testing across all 11 core features + 4 Agent Assist modules |
+| **24** | Load realistic Lakeside CU demo data across every screen, walk through the full demo script, fix edge cases | Demo scenarios: live call simulation with objection detection, CRM lookup, product recs, post-call generation | Dry run of full client demo (both tracks) |
+| **25** | Final bug fixes, wrap-up documentation | Final bug fixes, wrap-up documentation | **CLIENT DEMO** — Full platform walkthrough |
 
 #### Week 5 Milestone
 
