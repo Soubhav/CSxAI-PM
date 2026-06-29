@@ -16,12 +16,12 @@ export default function PresenceDot({
   size?: 'sm' | 'md'
 }) {
   const dim = size === 'sm' ? 'w-2 h-2' : 'w-2.5 h-2.5'
-  const bg = status === 'available' ? 'bg-emerald-400' : 'bg-red-400'
+  const bg = status === 'available' ? 'bg-emerald-500' : 'bg-red-500'
 
   return (
     <span className={cn('relative inline-flex items-center justify-center rounded-full flex-shrink-0', dim, bg)}>
       {status === 'presenting' && (
-        <span className="absolute h-[1.5px] w-[55%] rounded-full bg-background" />
+        <span className="absolute h-[1.5px] w-[55%] rounded-full bg-white" />
       )}
     </span>
   )
