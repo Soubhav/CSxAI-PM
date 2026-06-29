@@ -11,6 +11,7 @@ import {
   Radio,
   Wrench,
   Headphones,
+  Headset,
   Building2,
   ChevronDown,
   BookOpen,
@@ -117,6 +118,18 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
+
+      {/* Cross-link to CSxIQ (AI Assist) */}
+      <div className="px-3 pt-3">
+        <Link
+          href="/csxiq"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg border border-primary/25 bg-primary/10 text-sm font-medium text-primary hover:bg-primary/15 transition-colors"
+        >
+          <Headset className="w-4 h-4 flex-shrink-0" />
+          <span className="flex-1">Open CSxIQ</span>
+          <span className="text-[10px] text-primary/70 uppercase tracking-wide">AI Assist</span>
+        </Link>
+      </div>
 
       {/* Bottom user area */}
       <div className="px-3 py-4 border-t border-border">
