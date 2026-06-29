@@ -42,7 +42,7 @@ export default function CsxiqSidebar() {
           </div>
           <div className="leading-tight">
             <div className="text-slate-900 font-semibold text-[15px] tracking-tight">CSxIQ</div>
-            <div className="text-slate-400 text-[11px]">AI Assist · Support Desk</div>
+            <div className="text-slate-400 text-[11px]">Support Desk</div>
           </div>
         </div>
       </div>

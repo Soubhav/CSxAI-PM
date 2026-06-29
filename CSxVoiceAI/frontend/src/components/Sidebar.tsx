@@ -119,7 +119,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Cross-link to CSxIQ (AI Assist) */}
+      {/* Cross-link to CSxIQ (CSR portal) */}
       <div className="px-3 pt-3">
         <Link
           href="/csxiq"
@@ -127,7 +127,7 @@ export default function Sidebar() {
         >
           <Headset className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">Open CSxIQ</span>
-          <span className="text-[10px] text-primary/70 uppercase tracking-wide">AI Assist</span>
+          <span className="text-[10px] text-primary/70 uppercase tracking-wide">Support</span>
         </Link>
       </div>
 
