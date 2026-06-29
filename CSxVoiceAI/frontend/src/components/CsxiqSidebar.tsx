@@ -8,6 +8,7 @@ import {
   Inbox,
   PhoneOutgoing,
   Radio,
+  Clock,
   ChevronsUpDown,
   ArrowUpRight,
   Check,
@@ -23,6 +24,7 @@ const nav = [
   { label: 'Home', href: '/csxiq', icon: Inbox },
   { label: 'Callbacks', href: '/csxiq/callbacks', icon: PhoneOutgoing, count: pendingCallbacks },
   { label: 'Live Escalations', href: '/csxiq/escalations', icon: Radio, live: liveEscalations },
+  { label: 'History', href: '/csxiq/history', icon: Clock },
 ]
 
 export default function CsxiqSidebar() {

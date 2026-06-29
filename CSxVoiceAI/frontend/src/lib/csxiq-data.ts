@@ -362,3 +362,254 @@ export const CHANNEL_LABEL: Record<Channel, string> = {
   web: 'Web Chat',
   email: 'Email',
 }
+
+// ─── History (full interaction trail) ─────────────────────────────────
+// Every message and call, tagged by status + sentiment. Any item still
+// tagged "unresolved" (or unreachable / follow-up) exposes a WebRTC
+// "Call back" action so the CSR can reach the member from this screen.
+
+export type InteractionType = 'callback' | 'chat' | 'escalation'
+export type InteractionStatus = 'resolved' | 'unresolved' | 'followup' | 'escalated' | 'unreachable'
+export type Sentiment = 'positive' | 'neutral' | 'negative'
+
+// Statuses that still warrant reaching back out to the member via callback.
+export const CALLABLE_STATUSES: InteractionStatus[] = ['unresolved', 'unreachable', 'followup']
+
+export interface HistoryItem {
+  id: string
+  contactName: string
+  type: InteractionType
+  channel: Channel
+  phoneMasked: string
+  status: InteractionStatus
+  outcome: string          // human-readable disposition
+  sentiment: Sentiment
+  handledBy: string        // '—' if never handled by a human yet
+  closedAt: string         // ISO
+  durationLabel: string
+  summary: string
+  whyOpen?: string         // for callable items: why it still needs a callback
+  copilotSuggestion?: string
+  notes: string
+  transcript: { speaker: 'member' | 'agent' | 'csr'; text: string; time: string }[]
+}
+
+export const HISTORY: HistoryItem[] = [
+  {
+    id: 'h-001',
+    contactName: 'Elena Rodriguez',
+    type: 'callback',
+    channel: 'voice',
+    phoneMasked: '(•••) •••-7390',
+    status: 'unresolved',
+    outcome: 'Unresolved — call dropped',
+    sentiment: 'negative',
+    handledBy: '—',
+    closedAt: '2026-06-29T10:25:00',
+    durationLabel: '0m 41s',
+    summary:
+      'Member called about a declined card while traveling. The AI call disconnected ~40 seconds in, before identity could be verified or the merchant confirmed. Issue is unaddressed and likely time-sensitive.',
+    whyOpen:
+      'Call dropped early (poor signal while traveling). Member’s card is declining and they need it working today — needs a callback.',
+    copilotSuggestion:
+      'Check for a travel/fraud hold on the rewards card. If a precautionary block, verify identity and lift it. Confirm the recent declined transaction location.',
+    notes: '',
+    transcript: [
+      { speaker: 'member', text: 'My card just got declined at a gas station and I —', time: '10:24' },
+      { speaker: 'agent', text: 'I can help with that. To verify your identity, can you confirm—', time: '10:24' },
+      { speaker: 'member', text: '[call disconnected]', time: '10:25' },
+    ],
+  },
+  {
+    id: 'h-002',
+    contactName: 'Priya Nair',
+    type: 'callback',
+    channel: 'voice',
+    phoneMasked: '(•••) •••-1185',
+    status: 'unresolved',
+    outcome: 'Unresolved — needs human',
+    sentiment: 'neutral',
+    handledBy: '—',
+    closedAt: '2026-06-29T10:20:00',
+    durationLabel: '3m 12s',
+    summary:
+      'Member wanted to send a same-day wire to a title company for a home closing. The AI explained the cutoff but cannot initiate a wire (requires dual control + identity step-up). Needs a callback before the 2pm cutoff.',
+    whyOpen:
+      'Wire initiation is out of scope for the AI agent (human dual-control required). Deadline-sensitive — closing is today.',
+    copilotSuggestion:
+      'High-value same-day wire. Verify identity with step-up, confirm beneficiary (title company) against closing docs, route through dual-control approval. Cutoff 2:00pm.',
+    notes: '',
+    transcript: [
+      { speaker: 'member', text: 'I need to wire $40,000 to my title company before closing this afternoon.', time: '10:17' },
+      { speaker: 'agent', text: 'Wires over the phone need a specialist to verify and approve. Let me arrange a callback.', time: '10:18' },
+      { speaker: 'member', text: 'Okay but please hurry, closing is at 3.', time: '10:19' },
+    ],
+  },
+  {
+    id: 'h-003',
+    contactName: 'David Okafor',
+    type: 'callback',
+    channel: 'voice',
+    phoneMasked: '(•••) •••-9042',
+    status: 'unreachable',
+    outcome: 'Unreachable — follow-up sent',
+    sentiment: 'neutral',
+    handledBy: 'Maya Patel',
+    closedAt: '2026-06-29T08:30:00',
+    durationLabel: '—',
+    summary:
+      'Online-banking lockout, reset email bouncing on a stale address. Attempted 3 callbacks with no answer; sent a secure email follow-up with identity-verification steps.',
+    whyOpen: 'Three callback attempts went unanswered. Still locked out — worth one more try before closing.',
+    copilotSuggestion:
+      'Verify identity via KBA, update the email on file, then trigger a fresh password reset. Offer passkey login to prevent repeat lockouts.',
+    notes: '3 attempts, no answer. Secure email sent with KBA link.',
+    transcript: [
+      { speaker: 'csr', text: '[Attempt 3 — no answer] Left no voicemail. Sending secure email follow-up.', time: '8:30' },
+    ],
+  },
+  {
+    id: 'h-004',
+    contactName: 'Marcus Bell',
+    type: 'callback',
+    channel: 'voice',
+    phoneMasked: '(•••) •••-4821',
+    status: 'resolved',
+    outcome: 'Resolved by callback',
+    sentiment: 'positive',
+    handledBy: 'Maya Patel',
+    closedAt: '2026-06-29T10:14:00',
+    durationLabel: '6m 02s',
+    summary:
+      'Original AI call was tagged unresolved (loan application not found). On callback, located the auto-loan application by SSN, confirmed it was in underwriting with a decision expected in 2 business days, and set an SMS status alert.',
+    notes: 'Member reassured. Underwriting ref #AL-44821. SMS alert enabled.',
+    transcript: [
+      { speaker: 'csr', text: 'Hi Marcus, this is Maya from Lakeside calling you back about your auto loan application.', time: '10:08' },
+      { speaker: 'member', text: 'Oh great, finally. I couldn’t get anywhere on the phone earlier.', time: '10:08' },
+      { speaker: 'csr', text: 'I found it — it’s in underwriting and you should hear back within two business days. I’ll set up a text alert so you know the moment it moves.', time: '10:11' },
+      { speaker: 'member', text: 'That’s perfect, thank you so much.', time: '10:13' },
+    ],
+  },
+  {
+    id: 'h-005',
+    contactName: 'James Patterson',
+    type: 'chat',
+    channel: 'email',
+    phoneMasked: '(•••) •••-2204',
+    status: 'resolved',
+    outcome: 'Dispute opened · provisional credit',
+    sentiment: 'neutral',
+    handledBy: 'Maya Patel',
+    closedAt: '2026-06-29T09:55:00',
+    durationLabel: '13m',
+    summary:
+      'Member disputed a $89.99 charge from June 18 as unauthorized. Opened a formal dispute case, issued a provisional credit while the investigation runs, and sent confirmation by email.',
+    notes: 'Case #DSP-20913. Provisional credit posted. Follow-up SLA 10 business days.',
+    transcript: [
+      { speaker: 'member', text: 'I’m disputing a $89.99 charge from June 18 — I never authorized it.', time: '9:42' },
+      { speaker: 'csr', text: 'Thanks James. I’ve opened a dispute case and provisionally credited the amount while we investigate.', time: '9:55' },
+    ],
+  },
+  {
+    id: 'h-006',
+    contactName: 'Gregory Hale',
+    type: 'escalation',
+    channel: 'voice',
+    phoneMasked: '(•••) •••-5567',
+    status: 'resolved',
+    outcome: 'Fraud confirmed · card frozen',
+    sentiment: 'negative',
+    handledBy: 'Sofia Alvarez',
+    closedAt: '2026-06-29T09:48:00',
+    durationLabel: '9m 41s',
+    summary:
+      'Escalated for suspected fraud. Confirmed two unauthorized charges (~$800), froze the credit card, issued a replacement, and filed a fraud claim. Member calmed and reassured.',
+    notes: 'Card frozen, replacement expedited. Fraud claim #FR-7782 filed.',
+    transcript: [
+      { speaker: 'member', text: 'There are two charges I never made, almost $800 total!', time: '9:39' },
+      { speaker: 'agent', text: 'I understand. I’ve verified your identity and I’m connecting you to a specialist now.', time: '9:39' },
+      { speaker: 'csr', text: 'Gregory, I’ve frozen the card so nothing else can post. I’m filing a fraud claim and a replacement is on its way.', time: '9:45' },
+      { speaker: 'member', text: 'Thank you, that’s a relief.', time: '9:47' },
+    ],
+  },
+  {
+    id: 'h-007',
+    contactName: 'Aisha Mohammed',
+    type: 'chat',
+    channel: 'whatsapp',
+    phoneMasked: '(•••) •••-6612',
+    status: 'resolved',
+    outcome: 'Answered · branch hours',
+    sentiment: 'positive',
+    handledBy: 'Maya Patel',
+    closedAt: '2026-06-29T09:32:00',
+    durationLabel: '2m',
+    summary: 'Quick inquiry about Saturday branch hours. Confirmed downtown branch is open 9am–1pm Saturdays.',
+    notes: '',
+    transcript: [
+      { speaker: 'member', text: 'Is the downtown branch open Saturday?', time: '9:30' },
+      { speaker: 'csr', text: 'Yes — downtown is open Saturdays 9am–1pm.', time: '9:31' },
+      { speaker: 'member', text: 'Great, thank you so much!', time: '9:32' },
+    ],
+  },
+  {
+    id: 'h-008',
+    contactName: 'Sandra Whitfield',
+    type: 'callback',
+    channel: 'voice',
+    phoneMasked: '(•••) •••-3318',
+    status: 'resolved',
+    outcome: 'Resolved by callback',
+    sentiment: 'neutral',
+    handledBy: 'Devon Brooks',
+    closedAt: '2026-06-29T09:21:00',
+    durationLabel: '4m 18s',
+    summary:
+      'Dropped AI call about a loan payment date. On callback, confirmed next due date and approved a one-time payment extension of 7 days.',
+    notes: 'One-time extension granted. New due date communicated.',
+    transcript: [
+      { speaker: 'csr', text: 'Hi Sandra, calling you back about your car payment question.', time: '9:17' },
+      { speaker: 'member', text: 'Yes — can I push it a week?', time: '9:18' },
+      { speaker: 'csr', text: 'You’re eligible for a one-time extension. I’ve moved your due date out seven days.', time: '9:20' },
+    ],
+  },
+  {
+    id: 'h-009',
+    contactName: 'Robert Tan',
+    type: 'escalation',
+    channel: 'voice',
+    phoneMasked: '(•••) •••-8830',
+    status: 'escalated',
+    outcome: 'Escalated to mortgage specialist',
+    sentiment: 'positive',
+    handledBy: 'Nina Powell',
+    closedAt: '2026-06-29T08:50:00',
+    durationLabel: '7m 03s',
+    summary:
+      'HELOC inquiry where collateral is a rental property — outside configured policy. Took the call, gathered details, and warm-transferred to a mortgage specialist with full context.',
+    notes: 'Warm transfer to mortgage team. Specialist callback scheduled for 2pm.',
+    transcript: [
+      { speaker: 'member', text: 'It’s for a rental property I own — does that change the rate?', time: '8:44' },
+      { speaker: 'agent', text: 'That’s a specialized scenario. Let me bring in a mortgage representative.', time: '8:44' },
+      { speaker: 'csr', text: 'I’ve briefed our mortgage specialist; they’ll call you at 2pm with rental-property terms.', time: '8:49' },
+    ],
+  },
+  {
+    id: 'h-010',
+    contactName: 'Rachel Kim',
+    type: 'chat',
+    channel: 'web',
+    phoneMasked: '(•••) •••-4471',
+    status: 'resolved',
+    outcome: 'Answered · account opening info',
+    sentiment: 'positive',
+    handledBy: 'Liam Connor',
+    closedAt: '2026-06-29T08:12:00',
+    durationLabel: '5m',
+    summary: 'Member asked what documents are needed to open a savings account. Sent the requirements list and a link to start online.',
+    notes: 'Sent doc checklist + online application link.',
+    transcript: [
+      { speaker: 'member', text: 'What documents do I need to open a savings account?', time: '8:07' },
+      { speaker: 'csr', text: 'A government ID, your SSN, and proof of address. Here’s a link to start online.', time: '8:10' },
+    ],
+  },
+]
