@@ -125,22 +125,22 @@ export default function CallbacksPage() {
   return (
     <div className="flex h-screen overflow-hidden">
       {/* ── Queue list ──────────────────────────────────────────── */}
-      <div className="w-[372px] flex-shrink-0 border-r border-slate-200 bg-white flex flex-col">
-        <div className="px-5 pt-5 pb-4 border-b border-slate-100">
-          <h1 className="text-[17px] font-semibold text-slate-900 tracking-tight">Callbacks</h1>
-          <p className="text-slate-500 text-[13px] mt-0.5">Unresolved &amp; dropped AI calls — pull, claim, call back</p>
+      <div className="w-[372px] flex-shrink-0 border-r border-[#E9E9E7] bg-white flex flex-col">
+        <div className="px-5 pt-5 pb-4 border-b border-[#EFEEEC]">
+          <h1 className="text-[17px] font-semibold text-[#37352F] tracking-tight">Callbacks</h1>
+          <p className="text-[#787774] text-[13px] mt-0.5">Unresolved &amp; dropped AI calls — pull, claim, call back</p>
 
           {/* inline metric strip */}
-          <div className="mt-4 flex items-stretch rounded-xl border border-slate-200 bg-slate-50/50 divide-x divide-slate-200">
+          <div className="mt-4 flex items-stretch rounded-xl border border-[#E9E9E7] bg-[#F7F6F5] divide-x divide-[#E9E9E7]">
             {[
               { label: 'In queue', value: stats.pending, color: 'text-amber-600' },
-              { label: 'Mine', value: stats.claimed, color: 'text-slate-900' },
-              { label: 'No reach', value: stats.unreachable, color: 'text-slate-400' },
+              { label: 'Mine', value: stats.claimed, color: 'text-[#37352F]' },
+              { label: 'No reach', value: stats.unreachable, color: 'text-[#9B9A97]' },
               { label: 'Closed', value: stats.resolved, color: 'text-emerald-600' },
             ].map((s) => (
               <div key={s.label} className="flex-1 px-2 py-2.5 text-center">
                 <p className={cn('text-[17px] font-semibold tabular-nums leading-none', s.color)}>{s.value}</p>
-                <p className="text-[11px] text-slate-400 mt-1">{s.label}</p>
+                <p className="text-[11px] text-[#9B9A97] mt-1">{s.label}</p>
               </div>
             ))}
           </div>
@@ -157,18 +157,18 @@ export default function CallbacksPage() {
                 onClick={() => setSelectedId(c.id)}
                 className={cn(
                   'w-full text-left px-4 py-3 border-l-2 transition-colors',
-                  isSel ? 'border-slate-900 bg-slate-50' : 'border-transparent hover:bg-slate-50/70'
+                  isSel ? 'border-[#37352F] bg-[#F7F6F5]' : 'border-transparent hover:bg-[#F7F6F5]'
                 )}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[13.5px] font-medium text-slate-900 truncate">{c.contactName}</span>
+                  <span className="text-[13.5px] font-medium text-[#37352F] truncate">{c.contactName}</span>
                   <span className={cn('px-1.5 py-px rounded-md text-[11px] font-medium border flex items-center gap-1', rm.cls)}>
                     <span className={cn('w-1.5 h-1.5 rounded-full', rm.dot)} />
                     {rm.label}
                   </span>
                 </div>
-                <p className="text-[12.5px] text-slate-500 mt-0.5 truncate">{c.scenario}</p>
-                <div className="flex items-center gap-2.5 mt-1.5 text-[11.5px] text-slate-400">
+                <p className="text-[12.5px] text-[#787774] mt-0.5 truncate">{c.scenario}</p>
+                <div className="flex items-center gap-2.5 mt-1.5 text-[11.5px] text-[#9B9A97]">
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" /> {c.waitedMinutes}m
                   </span>
@@ -176,12 +176,12 @@ export default function CallbacksPage() {
                   <span>{c.attempts} {c.attempts === 1 ? 'try' : 'tries'}</span>
                   <span className="ml-auto">
                     {c.status === 'claimed' && (
-                      <span className={cn('flex items-center gap-1', mine ? 'text-slate-700' : 'text-slate-400')}>
+                      <span className={cn('flex items-center gap-1', mine ? 'text-[#4B4A45]' : 'text-[#9B9A97]')}>
                         <Lock className="w-3 h-3" /> {mine ? 'You' : c.claimedBy?.split(' ')[0]}
                       </span>
                     )}
                     {c.status === 'resolved' && <span className="flex items-center gap-1 text-emerald-600"><CheckCircle2 className="w-3 h-3" /> Resolved</span>}
-                    {c.status === 'unreachable' && <span className="flex items-center gap-1 text-slate-400"><Mail className="w-3 h-3" /> Followed up</span>}
+                    {c.status === 'unreachable' && <span className="flex items-center gap-1 text-[#9B9A97]"><Mail className="w-3 h-3" /> Followed up</span>}
                   </span>
                 </div>
               </button>
@@ -248,12 +248,12 @@ function Workspace(props: {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
-            <User className="w-5 h-5 text-slate-500" />
+          <div className="w-11 h-11 rounded-full bg-[#F1F0EE] border border-[#E9E9E7] flex items-center justify-center">
+            <User className="w-5 h-5 text-[#787774]" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-slate-900 tracking-tight">{cb.contactName}</h2>
-            <p className="text-[12.5px] text-slate-500">
+            <h2 className="text-lg font-semibold text-[#37352F] tracking-tight">{cb.contactName}</h2>
+            <p className="text-[12.5px] text-[#787774]">
               {cb.phoneMasked} · Member since {cb.context.memberSince} · {cb.context.accountType}
             </p>
           </div>
@@ -276,12 +276,12 @@ function Workspace(props: {
       )}
 
       {/* AI Summary / context card */}
-      <div className="mt-5 bg-white border border-slate-200 rounded-xl p-4">
+      <div className="mt-5 bg-white border border-[#E9E9E7] rounded-xl p-4">
         <div className="flex items-center gap-1.5 mb-2">
-          <Sparkles className="w-3.5 h-3.5 text-slate-400" />
-          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">AI Call Summary</p>
+          <Sparkles className="w-3.5 h-3.5 text-[#9B9A97]" />
+          <p className="text-[11px] font-semibold text-[#787774] uppercase tracking-wider">AI Call Summary</p>
         </div>
-        <p className="text-[13.5px] text-slate-700 leading-relaxed">{cb.aiSummary}</p>
+        <p className="text-[13.5px] text-[#4B4A45] leading-relaxed">{cb.aiSummary}</p>
         <div className="mt-3 bg-amber-50/60 border border-amber-200 rounded-lg p-3">
           <p className="text-[10.5px] font-semibold text-amber-700 uppercase tracking-wider mb-1">Why it needs a callback</p>
           <p className="text-[12.5px] text-amber-900/80">{cb.whyUnresolved}</p>
@@ -295,13 +295,13 @@ function Workspace(props: {
 
       {/* Transcript snippet */}
       <div className="mt-4">
-        <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Last exchange before drop-off</p>
+        <p className="text-[11px] font-semibold text-[#9B9A97] uppercase tracking-wider mb-2">Last exchange before drop-off</p>
         <div className="space-y-2">
           {cb.transcriptSnippet.map((line, i) => (
             <div key={i} className={cn('flex flex-col max-w-[78%]', line.speaker === 'member' ? 'ml-auto items-end' : 'items-start')}>
-              {line.speaker === 'agent' && <span className="text-[10.5px] text-slate-400 mb-0.5 px-1">CSxAI Agent</span>}
+              {line.speaker === 'agent' && <span className="text-[10.5px] text-[#9B9A97] mb-0.5 px-1">CSxAI Agent</span>}
               <div className={cn('rounded-2xl px-3 py-2 text-[12.5px] leading-relaxed',
-                line.speaker === 'agent' ? 'bg-slate-100 text-slate-700 rounded-tl-sm' : 'bg-slate-900 text-white rounded-tr-sm')}>
+                line.speaker === 'agent' ? 'bg-[#F1F0EE] text-[#4B4A45] rounded-tl-sm' : 'bg-[#37352F] text-white rounded-tr-sm')}>
                 {line.text}
               </div>
             </div>
@@ -312,30 +312,30 @@ function Workspace(props: {
       {/* ── Action zone ─────────────────────────────────────────── */}
       <div className="mt-6">
         {!claimed && phase === 'review' && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-white border border-[#E9E9E7] rounded-xl p-4 flex items-center justify-between">
             <div>
-              <p className="text-[13.5px] font-medium text-slate-900">This callback is in the shared queue</p>
-              <p className="text-[12.5px] text-slate-500 mt-0.5">Claim it to lock it to you and start the callback.</p>
+              <p className="text-[13.5px] font-medium text-[#37352F]">This callback is in the shared queue</p>
+              <p className="text-[12.5px] text-[#787774] mt-0.5">Claim it to lock it to you and start the callback.</p>
             </div>
-            <button onClick={props.onClaim} className="px-3.5 py-2 rounded-lg bg-slate-900 text-white text-[13px] font-medium hover:bg-slate-800 transition-colors flex items-center gap-2">
+            <button onClick={props.onClaim} className="px-3.5 py-2 rounded-lg bg-[#37352F] text-white text-[13px] font-medium hover:bg-[#2A2925] transition-colors flex items-center gap-2">
               <Lock className="w-3.5 h-3.5" /> Claim
             </button>
           </div>
         )}
 
         {claimed && phase === 'review' && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4">
+          <div className="bg-white border border-[#E9E9E7] rounded-xl p-4">
             {lastOutcome && (
-              <div className="mb-3 text-[12px] text-slate-500 flex items-center gap-1.5">
+              <div className="mb-3 text-[12px] text-[#787774] flex items-center gap-1.5">
                 <RotateCcw className="w-3.5 h-3.5" />
-                Last attempt: <span className="text-slate-900 font-medium capitalize">{lastOutcome.replace('-', ' ')}</span>
+                Last attempt: <span className="text-[#37352F] font-medium capitalize">{lastOutcome.replace('-', ' ')}</span>
                 · {attemptsLeft} {attemptsLeft === 1 ? 'attempt' : 'attempts'} left
               </div>
             )}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[13.5px] font-medium text-slate-900">Ready to call back</p>
-                <p className="text-[12.5px] text-slate-500 mt-0.5">Dialing {cb.phoneMasked} via WebRTC · attempt {attempts + 1} of {MAX_ATTEMPTS}</p>
+                <p className="text-[13.5px] font-medium text-[#37352F]">Ready to call back</p>
+                <p className="text-[12.5px] text-[#787774] mt-0.5">Dialing {cb.phoneMasked} via WebRTC · attempt {attempts + 1} of {MAX_ATTEMPTS}</p>
               </div>
               <button onClick={props.onStartCall} className="px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-[13px] font-semibold hover:bg-emerald-700 transition-colors flex items-center gap-2">
                 <PhoneOutgoing className="w-4 h-4" /> Call back
@@ -345,18 +345,18 @@ function Workspace(props: {
         )}
 
         {phase === 'dialing' && (
-          <div className="bg-white border border-slate-200 rounded-xl p-5 text-center">
+          <div className="bg-white border border-[#E9E9E7] rounded-xl p-5 text-center">
             <div className="w-14 h-14 mx-auto rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center animate-pulse">
               <PhoneCall className="w-6 h-6 text-emerald-600" />
             </div>
-            <p className="text-[14px] font-medium text-slate-900 mt-3">Calling {cb.contactName}…</p>
-            <p className="text-[12.5px] text-slate-500">{cb.phoneMasked}</p>
-            <p className="text-[10px] text-slate-300 mt-4 uppercase tracking-[0.18em]">Demo · simulate outcome</p>
+            <p className="text-[14px] font-medium text-[#37352F] mt-3">Calling {cb.contactName}…</p>
+            <p className="text-[12.5px] text-[#787774]">{cb.phoneMasked}</p>
+            <p className="text-[10px] text-[#C7C6C2] mt-4 uppercase tracking-[0.18em]">Demo · simulate outcome</p>
             <div className="grid grid-cols-2 gap-2 mt-2 max-w-sm mx-auto">
               <button onClick={() => props.onOutcome('connected')} className="px-3 py-2 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[12.5px] font-medium hover:bg-emerald-100">Member answered</button>
-              <button onClick={() => props.onOutcome('no-answer')} className="px-3 py-2 rounded-lg bg-slate-50 text-slate-600 border border-slate-200 text-[12.5px] font-medium hover:bg-slate-100">No answer</button>
-              <button onClick={() => props.onOutcome('voicemail')} className="px-3 py-2 rounded-lg bg-slate-50 text-slate-600 border border-slate-200 text-[12.5px] font-medium hover:bg-slate-100">Voicemail</button>
-              <button onClick={() => props.onOutcome('busy')} className="px-3 py-2 rounded-lg bg-slate-50 text-slate-600 border border-slate-200 text-[12.5px] font-medium hover:bg-slate-100">Busy</button>
+              <button onClick={() => props.onOutcome('no-answer')} className="px-3 py-2 rounded-lg bg-[#F7F6F5] text-[#5F5E5B] border border-[#E9E9E7] text-[12.5px] font-medium hover:bg-[#E9E9E7]">No answer</button>
+              <button onClick={() => props.onOutcome('voicemail')} className="px-3 py-2 rounded-lg bg-[#F7F6F5] text-[#5F5E5B] border border-[#E9E9E7] text-[12.5px] font-medium hover:bg-[#E9E9E7]">Voicemail</button>
+              <button onClick={() => props.onOutcome('busy')} className="px-3 py-2 rounded-lg bg-[#F7F6F5] text-[#5F5E5B] border border-[#E9E9E7] text-[12.5px] font-medium hover:bg-[#E9E9E7]">Busy</button>
             </div>
           </div>
         )}
@@ -366,28 +366,28 @@ function Workspace(props: {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[13.5px] font-medium text-slate-900">Live with {cb.contactName}</span>
+                <span className="text-[13.5px] font-medium text-[#37352F]">Live with {cb.contactName}</span>
               </div>
               <span className="text-[13.5px] font-mono text-emerald-700 tabular-nums">{fmtClock(callSeconds)}</span>
             </div>
 
-            <div className="mt-3 bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <div className="mt-3 bg-[#F7F6F5] border border-[#E9E9E7] rounded-lg p-3">
               <div className="flex items-center gap-1.5 mb-1">
-                <Sparkles className="w-3.5 h-3.5 text-slate-400" />
-                <p className="text-[10.5px] font-semibold text-slate-500 uppercase tracking-wider">Copilot suggestion</p>
+                <Sparkles className="w-3.5 h-3.5 text-[#9B9A97]" />
+                <p className="text-[10.5px] font-semibold text-[#787774] uppercase tracking-wider">Copilot suggestion</p>
               </div>
-              <p className="text-[12.5px] text-slate-600 leading-relaxed">{cb.copilotSuggestion}</p>
+              <p className="text-[12.5px] text-[#5F5E5B] leading-relaxed">{cb.copilotSuggestion}</p>
             </div>
 
             <textarea
               value={notes}
               onChange={(e) => props.onNotes(e.target.value)}
               placeholder="Call notes…"
-              className="w-full mt-3 h-16 rounded-lg border border-slate-200 bg-white text-[13px] text-slate-900 p-2.5 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 resize-none"
+              className="w-full mt-3 h-16 rounded-lg border border-[#E9E9E7] bg-white text-[13px] text-[#37352F] p-2.5 placeholder:text-[#9B9A97] focus:outline-none focus:ring-2 focus:ring-[#37352F]/10 focus:border-[#D6D5D2] resize-none"
             />
 
             <div className="flex items-center gap-2 mt-3">
-              <button onClick={props.onToggleMute} className={cn('px-3 py-2 rounded-lg text-[12.5px] font-medium border flex items-center gap-1.5', muted ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50')}>
+              <button onClick={props.onToggleMute} className={cn('px-3 py-2 rounded-lg text-[12.5px] font-medium border flex items-center gap-1.5', muted ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-white text-[#5F5E5B] border-[#E9E9E7] hover:bg-[#F1F0EE]')}>
                 {muted ? <MicOff className="w-3.5 h-3.5" /> : <Mic className="w-3.5 h-3.5" />} {muted ? 'Muted' : 'Mute'}
               </button>
               <button onClick={props.onEndCall} className="ml-auto px-4 py-2 rounded-lg bg-red-600 text-white text-[12.5px] font-semibold hover:bg-red-700 flex items-center gap-1.5">
@@ -398,23 +398,23 @@ function Workspace(props: {
         )}
 
         {phase === 'fallback' && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4">
+          <div className="bg-white border border-[#E9E9E7] rounded-xl p-4">
             <div className="flex items-center gap-2">
-              <Voicemail className="w-4 h-4 text-slate-400" />
-              <p className="text-[13.5px] font-medium text-slate-900">Member unreachable after {MAX_ATTEMPTS} attempts</p>
+              <Voicemail className="w-4 h-4 text-[#9B9A97]" />
+              <p className="text-[13.5px] font-medium text-[#37352F]">Member unreachable after {MAX_ATTEMPTS} attempts</p>
             </div>
-            <p className="text-[12.5px] text-slate-500 mt-0.5">Send a follow-up so they can reach back on their terms.</p>
+            <p className="text-[12.5px] text-[#787774] mt-0.5">Send a follow-up so they can reach back on their terms.</p>
             {fallbackSent ? (
               <div className="mt-3 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-[13px] text-emerald-700 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" /> {fallbackSent === 'sms' ? 'SMS' : 'Email'} follow-up sent to {cb.contactName}.
               </div>
             ) : (
               <div className="flex gap-2 mt-3">
-                <button onClick={() => props.onSendFallback('sms')} className="flex-1 px-3 py-2.5 rounded-lg bg-white border border-slate-200 text-[13px] font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-slate-400" /> Send SMS
+                <button onClick={() => props.onSendFallback('sms')} className="flex-1 px-3 py-2.5 rounded-lg bg-white border border-[#E9E9E7] text-[13px] font-medium text-[#4B4A45] hover:bg-[#F1F0EE] flex items-center justify-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-[#9B9A97]" /> Send SMS
                 </button>
-                <button onClick={() => props.onSendFallback('email')} className="flex-1 px-3 py-2.5 rounded-lg bg-white border border-slate-200 text-[13px] font-medium text-slate-700 hover:bg-slate-50 flex items-center justify-center gap-2">
-                  <Mail className="w-4 h-4 text-slate-400" /> Send Email
+                <button onClick={() => props.onSendFallback('email')} className="flex-1 px-3 py-2.5 rounded-lg bg-white border border-[#E9E9E7] text-[13px] font-medium text-[#4B4A45] hover:bg-[#F1F0EE] flex items-center justify-center gap-2">
+                  <Mail className="w-4 h-4 text-[#9B9A97]" /> Send Email
                 </button>
               </div>
             )}
@@ -422,14 +422,14 @@ function Workspace(props: {
         )}
 
         {phase === 'disposition' && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4">
-            <p className="text-[13.5px] font-medium text-slate-900 mb-3">How did the callback end?</p>
+          <div className="bg-white border border-[#E9E9E7] rounded-xl p-4">
+            <p className="text-[13.5px] font-medium text-[#37352F] mb-3">How did the callback end?</p>
             <div className="grid grid-cols-2 gap-2">
               {([
                 { d: 'resolved', label: 'Resolved', icon: CheckCircle2, cls: 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' },
                 { d: 'follow-up', label: 'Follow-up needed', icon: RotateCcw, cls: 'bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100' },
                 { d: 'escalate', label: 'Escalate', icon: ArrowRight, cls: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' },
-                { d: 'wrong-number', label: 'Wrong number', icon: PhoneOff, cls: 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100' },
+                { d: 'wrong-number', label: 'Wrong number', icon: PhoneOff, cls: 'bg-[#F7F6F5] text-[#5F5E5B] border-[#E9E9E7] hover:bg-[#E9E9E7]' },
               ] as const).map(({ d, label, icon: Icon, cls }) => (
                 <button key={d} onClick={() => props.onDispose(d)} className={cn('px-3 py-2.5 rounded-lg text-[13px] font-medium border flex items-center gap-2 transition-colors', cls)}>
                   <Icon className="w-4 h-4" /> {label}
@@ -440,7 +440,7 @@ function Workspace(props: {
         )}
 
         {phase === 'done' && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4">
+          <div className="bg-white border border-[#E9E9E7] rounded-xl p-4">
             {disposition === 'resolved' ? (
               <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 text-emerald-700 font-medium text-[13.5px]">
@@ -448,16 +448,16 @@ function Workspace(props: {
                 </div>
                 <div className="mt-3 flex items-center gap-2 text-[12px]">
                   <span className="px-2 py-0.5 rounded-md bg-red-50 text-red-700 border border-red-200">Original call: Unresolved</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#9B9A97]" />
                   <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">Resolved by callback</span>
                 </div>
-                <p className="text-[11.5px] text-slate-500 mt-2">
-                  Write-back sent to CSxAI — this counts toward the <span className="text-slate-700 font-medium">final resolution rate</span> on the analytics dashboard.
+                <p className="text-[11.5px] text-[#787774] mt-2">
+                  Write-back sent to CSxAI — this counts toward the <span className="text-[#4B4A45] font-medium">final resolution rate</span> on the analytics dashboard.
                 </p>
               </div>
             ) : (
-              <div className="text-[13.5px] text-slate-700 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-slate-400" />
+              <div className="text-[13.5px] text-[#4B4A45] flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#9B9A97]" />
                 Callback closed as <span className="font-medium capitalize">{disposition?.replace('-', ' ')}</span>.
               </div>
             )}

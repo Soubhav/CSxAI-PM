@@ -1,8 +1,9 @@
-// ─── CSxIQ (AI Assist) — CSR-facing portal mock data ──────────────────
+// ─── CSxIQ — CSR-facing portal mock data ──────────────────────────────
 // Sector-neutral in logic; Lakeside Credit Union flavored on screen.
 
 export type Channel = 'voice' | 'whatsapp' | 'web' | 'email'
-export type PresenceStatus = 'available' | 'busy' | 'presenting'
+// Presence: green = active, red = busy, yellow = AFK (away from keyboard).
+export type PresenceStatus = 'available' | 'busy' | 'away'
 
 // ─── Callbacks ────────────────────────────────────────────────────────
 // Two triggers: "dropped" (early hangup) and "unresolved" (AI resolution
@@ -206,6 +207,9 @@ export interface ChatThread {
   unread: number
   waitingMinutes: number
   messages: ChatMessage[]
+  // AI Assist Copilot: suggestion pulled from the Knowledge Base for this query.
+  copilotSuggestion?: string
+  copilotSource?: string
 }
 
 export const CHAT_THREADS: ChatThread[] = [
@@ -221,6 +225,9 @@ export const CHAT_THREADS: ChatThread[] = [
       { from: 'csr', text: 'Hi Tomás — let me check that for you. One moment.', time: '10:03 AM' },
       { from: 'member', text: 'So the wire didn’t go through?', time: '10:05 AM' },
     ],
+    copilotSuggestion:
+      'Domestic wires submitted before the 2:00pm CT cutoff post same business day; those after cutoff post the next business day. Ask Tomás for the wire reference number to confirm status, and reassure him no duplicate will be sent.',
+    copilotSource: 'Wire Transfer SOP · v3 — §2 Cutoff Times',
   },
   {
     id: 'ch-002',
@@ -232,6 +239,9 @@ export const CHAT_THREADS: ChatThread[] = [
     messages: [
       { from: 'member', text: 'What documents do I need to open a savings account?', time: '10:06 AM' },
     ],
+    copilotSuggestion:
+      'To open a savings account a member needs: a government-issued photo ID, their SSN or ITIN, proof of address dated within 60 days, and a $5 minimum opening deposit. Membership also requires eligibility (residency or employer). Offer the online application link.',
+    copilotSource: 'Account Opening Checklist · §1 New Savings',
   },
   {
     id: 'ch-003',
@@ -244,6 +254,9 @@ export const CHAT_THREADS: ChatThread[] = [
       { from: 'member', text: 'I’m disputing a $89.99 charge from June 18 — I never authorized it.', time: '9:42 AM' },
       { from: 'csr', text: 'Thanks James. I’ve opened a dispute case and provisionally credited the amount while we investigate.', time: '9:55 AM' },
     ],
+    copilotSuggestion:
+      'Reg E gives the member provisional credit within 10 business days and the investigation up to 45 days. Confirm the dispute case number, set expectations on the timeline, and let James know he won’t be liable for the disputed amount while it’s investigated.',
+    copilotSource: 'Card Disputes SOP · §4 Reg E Timelines',
   },
   {
     id: 'ch-004',
@@ -257,6 +270,9 @@ export const CHAT_THREADS: ChatThread[] = [
       { from: 'csr', text: 'Yes — downtown is open Saturdays 9am–1pm.', time: '9:31 AM' },
       { from: 'member', text: 'Great, thank you so much!', time: '9:32 AM' },
     ],
+    copilotSuggestion:
+      'Downtown branch Saturday hours are 9:00am–1:00pm. Drive-thru opens 8:30am. All other branches are closed Saturdays. ATMs are available 24/7.',
+    copilotSource: 'Branch & ATM Hours · Downtown',
   },
 ]
 
@@ -339,21 +355,108 @@ export const CSR_STATS = {
   avgHandleMinutes: 6.4,
 }
 
-// ─── Team presence ────────────────────────────────────────────────────
+// ─── Team / CSR roster (used by Home presence + Admin portal) ─────────
 
-export interface TeamMember {
+export type CsrRole = 'CSR' | 'Senior CSR' | 'Team Lead' | 'Admin'
+
+export interface CSR {
+  id: string
   name: string
-  role: string
+  role: CsrRole
+  email: string
   status: PresenceStatus
   activeCount: number
+  onboardedAt: string        // ISO date
+  callsToday: number
+  queriesResolved: number    // today
+  avgHandleMinutes: number
+  csat: number               // 0–5
+  tenure: string             // human-readable
+  bio: string
 }
 
-export const TEAM: TeamMember[] = [
-  { name: 'Maya Patel', role: 'CSR', status: 'available', activeCount: 1 },
-  { name: 'Devon Brooks', role: 'CSR', status: 'busy', activeCount: 3 },
-  { name: 'Sofia Alvarez', role: 'Senior CSR', status: 'presenting', activeCount: 0 },
-  { name: 'Liam Connor', role: 'CSR', status: 'available', activeCount: 0 },
-  { name: 'Nina Powell', role: 'Team Lead', status: 'busy', activeCount: 2 },
+export const CSRS: CSR[] = [
+  {
+    id: 'csr-01', name: 'Maya Patel', role: 'CSR', email: 'maya.patel@lakesidecu.org',
+    status: 'available', activeCount: 1, onboardedAt: '2024-08-12', callsToday: 18, queriesResolved: 14,
+    avgHandleMinutes: 6.4, csat: 4.7, tenure: '1 yr 10 mo',
+    bio: 'Frontline CSR on the deposits & cards desk. Strongest on dispute handling and digital-banking support. Bilingual (EN/ES).',
+  },
+  {
+    id: 'csr-02', name: 'Devon Brooks', role: 'CSR', email: 'devon.brooks@lakesidecu.org',
+    status: 'busy', activeCount: 3, onboardedAt: '2025-01-20', callsToday: 22, queriesResolved: 17,
+    avgHandleMinutes: 5.1, csat: 4.5, tenure: '1 yr 5 mo',
+    bio: 'High-volume chat specialist. Fastest average handle time on the team. Focus area: account servicing.',
+  },
+  {
+    id: 'csr-03', name: 'Sofia Alvarez', role: 'Senior CSR', email: 'sofia.alvarez@lakesidecu.org',
+    status: 'away', activeCount: 0, onboardedAt: '2023-03-06', callsToday: 11, queriesResolved: 10,
+    avgHandleMinutes: 7.8, csat: 4.9, tenure: '3 yr 3 mo',
+    bio: 'Senior CSR and fraud point-person. Handles escalations and mentors new hires. Certified in BSA/AML basics.',
+  },
+  {
+    id: 'csr-04', name: 'Liam Connor', role: 'CSR', email: 'liam.connor@lakesidecu.org',
+    status: 'available', activeCount: 0, onboardedAt: '2026-05-02', callsToday: 9, queriesResolved: 6,
+    avgHandleMinutes: 8.9, csat: 4.3, tenure: '1 mo',
+    bio: 'Newest hire, ramping on the lending desk. Currently shadowing for wire and payoff scenarios.',
+  },
+  {
+    id: 'csr-05', name: 'Nina Powell', role: 'Team Lead', email: 'nina.powell@lakesidecu.org',
+    status: 'busy', activeCount: 2, onboardedAt: '2022-06-15', callsToday: 7, queriesResolved: 7,
+    avgHandleMinutes: 9.5, csat: 4.8, tenure: '4 yr',
+    bio: 'Team lead for member support. Owns scheduling, QA reviews, and escalation routing. Approves wires and refunds.',
+  },
+]
+
+// Convenience alias for the Home presence panel.
+export const TEAM = CSRS
+
+// ─── Admin metrics (derived) ──────────────────────────────────────────
+
+export const ADMIN_METRICS = {
+  csrsOnboarded: CSRS.length,
+  activeNow: CSRS.filter((c) => c.status === 'available').length,
+  callsToday: CSRS.reduce((n, c) => n + c.callsToday, 0),
+  queriesResolvedToday: CSRS.reduce((n, c) => n + c.queriesResolved, 0),
+  avgCsat: +(CSRS.reduce((n, c) => n + c.csat, 0) / CSRS.length).toFixed(1),
+  // 7-day history glimpse (calls handled, queries resolved)
+  history: [
+    { day: 'Mon', calls: 142, resolved: 121 },
+    { day: 'Tue', calls: 168, resolved: 149 },
+    { day: 'Wed', calls: 151, resolved: 133 },
+    { day: 'Thu', calls: 174, resolved: 158 },
+    { day: 'Fri', calls: 189, resolved: 170 },
+    { day: 'Sat', calls: 96, resolved: 88 },
+    { day: 'Today', calls: 67, resolved: 54 },
+  ],
+}
+
+// ─── Knowledge Base (SOPs / policies the Copilot retrieves from) ──────
+
+export type KbDocType = 'SOP' | 'Policy' | 'FAQ' | 'Product'
+export type KbDocStatus = 'indexed' | 'processing'
+
+export interface KbDoc {
+  id: string
+  title: string
+  type: KbDocType
+  format: 'PDF' | 'DOCX'
+  sizeLabel: string
+  updatedAt: string          // ISO
+  uploadedBy: string
+  status: KbDocStatus
+  chunks: number
+  usedToday: number          // times the Copilot cited it today
+}
+
+export const KNOWLEDGE: KbDoc[] = [
+  { id: 'kb-01', title: 'Wire Transfer SOP', type: 'SOP', format: 'PDF', sizeLabel: '412 KB', updatedAt: '2026-06-21', uploadedBy: 'Nina Powell', status: 'indexed', chunks: 38, usedToday: 12 },
+  { id: 'kb-02', title: 'Card Disputes SOP (Reg E)', type: 'SOP', format: 'PDF', sizeLabel: '286 KB', updatedAt: '2026-06-18', uploadedBy: 'Sofia Alvarez', status: 'indexed', chunks: 24, usedToday: 9 },
+  { id: 'kb-03', title: 'Account Opening Checklist', type: 'SOP', format: 'DOCX', sizeLabel: '74 KB', updatedAt: '2026-06-24', uploadedBy: 'Nina Powell', status: 'indexed', chunks: 11, usedToday: 7 },
+  { id: 'kb-04', title: 'Branch & ATM Hours', type: 'FAQ', format: 'DOCX', sizeLabel: '38 KB', updatedAt: '2026-06-10', uploadedBy: 'Maya Patel', status: 'indexed', chunks: 6, usedToday: 5 },
+  { id: 'kb-05', title: 'Digital Banking Troubleshooting', type: 'SOP', format: 'PDF', sizeLabel: '520 KB', updatedAt: '2026-06-15', uploadedBy: 'Devon Brooks', status: 'indexed', chunks: 41, usedToday: 4 },
+  { id: 'kb-06', title: 'Privacy & Disclosure Policy', type: 'Policy', format: 'PDF', sizeLabel: '198 KB', updatedAt: '2026-05-30', uploadedBy: 'Nina Powell', status: 'indexed', chunks: 19, usedToday: 2 },
+  { id: 'kb-07', title: 'CD & Savings Rate Sheet', type: 'Product', format: 'PDF', sizeLabel: '156 KB', updatedAt: '2026-06-28', uploadedBy: 'Nina Powell', status: 'processing', chunks: 0, usedToday: 0 },
 ]
 
 export const CHANNEL_LABEL: Record<Channel, string> = {

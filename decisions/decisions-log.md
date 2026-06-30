@@ -142,3 +142,32 @@
 - **Decision:** Deploy **single-tenant per credit union** for now (strong isolation, simplest compliance, matches the config-driven model). Build the data model **tenant-aware (`org_id` scoping)** so a pooled multi-tenant model is possible later without a rewrite.
 - **Rationale:** Isolation is a sales asset and low-N ops overhead is trivial; revisit pooled multi-tenancy at ~15–20 tenants / weekly onboarding.
 - **Sign-off:** Soubhav (recommended). Refines the 2026-04-16 multi-tenancy decision above.
+
+### D-19 · AI Assist Copilot grounded in a Knowledge Base
+- **Tags:** `[Knowledge]` `[Home]`
+- **Decision:** Add a **Knowledge Base** screen (`/csxiq/knowledge`) where admins upload SOPs / policies / FAQs. When a member query arrives in chat, the **Copilot** retrieves from those docs and shows a suggestion (with its source) beside the chat that the CSR can one-click **Insert into reply** — review before sending.
+- **Rationale:** Turns tribal SOP knowledge into instant, cited assistance; the central value of "AI Assist."
+- **Sign-off:** Soubhav.
+
+### D-20 · Separate Admin portal for RBAC, onboarding & ops metrics
+- **Tags:** `[Auth]` `[Admin]` `[Architecture]`
+- **Decision:** A **separate Admin portal** (`/admin`, its own sidebar) handles role-based access: **onboard CSRs** (name, email, role, bio), view each CSR's **bio + today's activity + role-based permissions**, and see **ops metrics** — CSRs onboarded, active now, calls taken today, queries resolved today, avg CSAT, and a 7-day history glimpse.
+- **Rationale:** Admin/ops management is a distinct surface from frontline CSR work and shouldn't clutter the CSR portal.
+- **Sign-off:** Soubhav.
+
+### D-21 · Admin/ops metrics live in CSxIQ's Admin portal (refines D-10)
+- **Tags:** `[Analytics]` `[Admin]`
+- **Decision:** **Operational CSR-management metrics** (reps onboarded, calls/queries today, CSAT, team activity) live in the **CSxIQ Admin portal**. The **member-facing resolution analytics** (AI → final resolution funnel) still live in **CSxAI** (D-10 unchanged for that).
+- **Rationale:** Team-ops numbers belong where you manage the team; the sellable resolution story stays in the admin/AI platform.
+- **Sign-off:** Soubhav. **Refines D-10.**
+
+### D-22 · Presence: three states only — Active / Busy / AFK
+- **Tags:** `[UI]`
+- **Decision:** Presence is exactly three states across the whole portal: **green = Active, red = Busy, yellow = AFK** (away from keyboard). The previous "presenting" (red-with-hyphen) state is removed.
+- **Sign-off:** Soubhav.
+
+### D-23 · Notion-like visual language
+- **Tags:** `[UI]`
+- **Decision:** Shift CSxIQ + Admin to a **Notion-inspired** look: warm off-white surfaces (`#F7F6F5` / white), warm near-black ink text (`#37352F`), hairline warm borders, airy spacing, large page titles with an icon, hover-gray rows, and subtle shadows. Replaces the earlier cool "slate" palette while keeping status-only color and the warm ink as the primary action color.
+- **Rationale:** The slate look read as dull; Notion's warmth + density + hierarchy reads as a polished, intentional product.
+- **Sign-off:** Soubhav.
