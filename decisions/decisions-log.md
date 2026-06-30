@@ -171,3 +171,15 @@
 - **Decision:** Shift CSxIQ + Admin to a **Notion-inspired** look: warm off-white surfaces (`#F7F6F5` / white), warm near-black ink text (`#37352F`), hairline warm borders, airy spacing, large page titles with an icon, hover-gray rows, and subtle shadows. Replaces the earlier cool "slate" palette while keeping status-only color and the warm ink as the primary action color.
 - **Rationale:** The slate look read as dull; Notion's warmth + density + hierarchy reads as a polished, intentional product.
 - **Sign-off:** Soubhav.
+
+### D-24 · Channel integrations live in the Admin portal
+- **Tags:** `[Admin]` `[Integrations]` `[Architecture]`
+- **Decision:** Add an **Integrations** section to the Admin portal (`/admin/integrations`) with a per-channel screen for **WhatsApp** (Meta Cloud API), **SMS** (Twilio), and **Email** (IMAP/SMTP or Gmail/Microsoft OAuth). Each screen documents inbound/outbound flow, prerequisites, a numbered "how it works," connection fields, and the inbound webhook URL. All channels feed the one omnichannel inbox.
+- **Status:** **Connection flow not finalized** — these screens document the mechanics so the wiring can be decided. Setup fields/values are illustrative; no real auth yet.
+- **Sign-off:** Soubhav.
+
+### D-25 · Omnichannel filters + email rendered as email
+- **Tags:** `[Home]` `[UI]`
+- **Decision:** The Home inbox gets channel filters — **All / WhatsApp / SMS / Email**. **SMS** is added as a first-class channel. **Email** threads render as real email (subject, from→to, threaded message blocks) with an **email composer** (To, editable Subject, multi-line body, "Send email"); WhatsApp/SMS keep the chat-bubble view. The Copilot "Insert" adapts its label per channel.
+- **Rationale:** Email needs email semantics so CSRs reply in-format; filters keep a busy omnichannel inbox navigable.
+- **Sign-off:** Soubhav.

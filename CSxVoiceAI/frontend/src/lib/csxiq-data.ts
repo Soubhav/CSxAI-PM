@@ -1,7 +1,7 @@
 // ─── CSxIQ — CSR-facing portal mock data ──────────────────────────────
 // Sector-neutral in logic; Lakeside Credit Union flavored on screen.
 
-export type Channel = 'voice' | 'whatsapp' | 'web' | 'email'
+export type Channel = 'voice' | 'whatsapp' | 'sms' | 'web' | 'email'
 // Presence: green = active, red = busy, yellow = AFK (away from keyboard).
 export type PresenceStatus = 'available' | 'busy' | 'away'
 
@@ -210,6 +210,10 @@ export interface ChatThread {
   // AI Assist Copilot: suggestion pulled from the Knowledge Base for this query.
   copilotSuggestion?: string
   copilotSource?: string
+  // Email channel only — rendered as a real email thread.
+  subject?: string
+  fromEmail?: string
+  toEmail?: string
 }
 
 export const CHAT_THREADS: ChatThread[] = [
@@ -232,7 +236,7 @@ export const CHAT_THREADS: ChatThread[] = [
   {
     id: 'ch-002',
     contactName: 'Rachel Kim',
-    channel: 'web',
+    channel: 'sms',
     preview: 'What documents do I need to open a savings account?',
     unread: 1,
     waitingMinutes: 1,
@@ -247,12 +251,15 @@ export const CHAT_THREADS: ChatThread[] = [
     id: 'ch-003',
     contactName: 'James Patterson',
     channel: 'email',
-    preview: 'Re: Dispute on June 18 charge',
+    preview: 'Re: Dispute on June 18 charge ($89.99)',
     unread: 0,
     waitingMinutes: 24,
+    subject: 'Dispute on June 18 charge ($89.99)',
+    fromEmail: 'james.patterson@gmail.com',
+    toEmail: 'support@lakesidecu.org',
     messages: [
-      { from: 'member', text: 'I’m disputing a $89.99 charge from June 18 — I never authorized it.', time: '9:42 AM' },
-      { from: 'csr', text: 'Thanks James. I’ve opened a dispute case and provisionally credited the amount while we investigate.', time: '9:55 AM' },
+      { from: 'member', text: 'Hello,\n\nI’m writing to dispute a charge of $89.99 dated June 18 from "WL*Digital Svc". I never authorized this and don’t recognize the merchant. Please reverse it and let me know the next steps.\n\nThank you,\nJames Patterson\nMember #44213', time: 'Yesterday, 9:42 AM' },
+      { from: 'csr', text: 'Hi James,\n\nThanks for flagging this. I’ve opened dispute case #DSP-20913 and applied a provisional credit of $89.99 to your account while we investigate. You won’t be liable for the amount during the review.\n\nUnder Reg E, the investigation can take up to 45 days; most resolve sooner. I’ll email you the moment there’s an update.\n\nBest,\nMaya · Lakeside Member Support', time: 'Yesterday, 9:55 AM' },
     ],
     copilotSuggestion:
       'Reg E gives the member provisional credit within 10 business days and the investigation up to 45 days. Confirm the dispute case number, set expectations on the timeline, and let James know he won’t be liable for the disputed amount while it’s investigated.',
@@ -273,6 +280,20 @@ export const CHAT_THREADS: ChatThread[] = [
     copilotSuggestion:
       'Downtown branch Saturday hours are 9:00am–1:00pm. Drive-thru opens 8:30am. All other branches are closed Saturdays. ATMs are available 24/7.',
     copilotSource: 'Branch & ATM Hours · Downtown',
+  },
+  {
+    id: 'ch-005',
+    contactName: 'Marcus Bell',
+    channel: 'sms',
+    preview: 'Did my paycheck deposit land yet?',
+    unread: 1,
+    waitingMinutes: 2,
+    messages: [
+      { from: 'member', text: 'Hey, did my paycheck deposit land yet? Need to pay rent.', time: '10:09 AM' },
+    ],
+    copilotSuggestion:
+      'Verify identity by SMS-safe means before sharing balances (last 4 of SSN + ZIP). Direct deposits from employers typically post by 9am on payday; if pending, it will show as “memo-posted.” Offer to enable a deposit-alert text.',
+    copilotSource: 'Digital Banking Troubleshooting · Deposits',
   },
 ]
 
@@ -462,9 +483,146 @@ export const KNOWLEDGE: KbDoc[] = [
 export const CHANNEL_LABEL: Record<Channel, string> = {
   voice: 'Voice',
   whatsapp: 'WhatsApp',
+  sms: 'SMS',
   web: 'Web Chat',
   email: 'Email',
 }
+
+// ─── Integrations (Admin → Integrations) ──────────────────────────────
+// Inbound/outbound channel connectors. Flow is documented here so the
+// final wiring can be decided; setup fields are illustrative.
+
+export type IntegrationChannel = 'whatsapp' | 'sms' | 'email'
+export type IntegrationStatus = 'connected' | 'not-connected'
+
+export interface IntegrationStep {
+  title: string
+  detail: string
+}
+export interface IntegrationField {
+  label: string
+  placeholder: string
+  secret?: boolean
+  value?: string
+}
+
+export interface Integration {
+  channel: IntegrationChannel
+  name: string
+  provider: string
+  status: IntegrationStatus
+  connectedAccount?: string
+  blurb: string
+  inbound: string
+  outbound: string
+  prerequisites: string[]
+  howItWorks: IntegrationStep[]
+  fields: IntegrationField[]
+  webhookUrl: string
+  notes: string[]
+}
+
+export const INTEGRATIONS: Integration[] = [
+  {
+    channel: 'whatsapp',
+    name: 'WhatsApp',
+    provider: 'Meta WhatsApp Business Cloud API',
+    status: 'connected',
+    connectedAccount: '+1 (415) 555-0142 · Lakeside CU',
+    blurb: 'Two-way WhatsApp messaging through an approved WhatsApp Business number.',
+    inbound: 'Member messages your WhatsApp Business number → Meta sends a webhook to CSxIQ → a chat ticket is created/updated in the omnichannel inbox.',
+    outbound: 'Within the 24-hour customer service window you can reply freely. Outside it, you must send a pre-approved message template.',
+    prerequisites: [
+      'Meta Business Manager account with a verified business',
+      'A WhatsApp Business Account (WABA) + a phone number not tied to a personal WhatsApp',
+      'A System User with a permanent access token',
+      'At least one approved message template for out-of-window replies',
+    ],
+    howItWorks: [
+      { title: 'Register the number', detail: 'Add and verify your business phone number inside the WhatsApp Business Account in Meta Business Manager.' },
+      { title: 'Generate a permanent token', detail: 'Create a System User and grant it the WABA; copy the permanent access token and the Phone Number ID.' },
+      { title: 'Point the webhook at CSxIQ', detail: 'Set the Cloud API webhook callback URL to the CSxIQ endpoint and subscribe to the “messages” field. Verify with the app secret.' },
+      { title: 'Approve templates', detail: 'Submit message templates (e.g. appointment, follow-up) for Meta approval — required to start conversations outside the 24h window.' },
+      { title: 'Go live', detail: 'Inbound messages now create tickets; CSRs reply from the inbox. Delivery/read receipts flow back via the same webhook.' },
+    ],
+    fields: [
+      { label: 'WhatsApp Business Account ID', placeholder: '102290129340398' },
+      { label: 'Phone Number ID', placeholder: '106540352242922' },
+      { label: 'Permanent Access Token', placeholder: 'EAAG… (system user token)', secret: true },
+      { label: 'App Secret', placeholder: '••••••••••••', secret: true },
+    ],
+    webhookUrl: 'https://api.csxiq.app/webhooks/whatsapp/lakeside-cu',
+    notes: [
+      'The 24-hour service window resets every time the member messages you.',
+      'Template messages are billed per conversation by Meta.',
+    ],
+  },
+  {
+    channel: 'sms',
+    name: 'SMS',
+    provider: 'Twilio Programmable Messaging',
+    status: 'connected',
+    connectedAccount: '+1 (628) 555-0190 · A2P registered',
+    blurb: 'Two-way SMS/MMS through a Twilio phone number or messaging service.',
+    inbound: 'Member texts your Twilio number → Twilio POSTs the message to your CSxIQ webhook → a chat ticket is created/updated.',
+    outbound: 'CSRs reply from the inbox → CSxIQ calls Twilio’s Messages API to send the SMS from your number.',
+    prerequisites: [
+      'A Twilio account (Account SID + Auth Token)',
+      'A Twilio phone number or Messaging Service SID',
+      'US A2P 10DLC brand + campaign registration (required to send to US numbers at scale)',
+      'A publicly reachable webhook URL for inbound messages',
+    ],
+    howItWorks: [
+      { title: 'Connect the account', detail: 'Paste your Twilio Account SID and Auth Token so CSxIQ can send on your behalf via the Messages API.' },
+      { title: 'Choose a sender', detail: 'Select the Twilio phone number (or Messaging Service) members will text and that replies are sent from.' },
+      { title: 'Set the inbound webhook', detail: 'In Twilio, set the number’s “A message comes in” webhook to the CSxIQ inbound URL (HTTP POST).' },
+      { title: 'Register A2P 10DLC', detail: 'Register your brand and campaign so US carriers don’t filter your messages. Required for production volume.' },
+      { title: 'Go live', detail: 'Inbound texts become tickets; outbound replies send instantly. Delivery status callbacks update the ticket.' },
+    ],
+    fields: [
+      { label: 'Account SID', placeholder: 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' },
+      { label: 'Auth Token', placeholder: '••••••••••••••••', secret: true },
+      { label: 'Messaging Service SID / From Number', placeholder: 'MGxxxx… or +16285550190' },
+    ],
+    webhookUrl: 'https://api.csxiq.app/webhooks/sms/lakeside-cu',
+    notes: [
+      'A2P 10DLC registration can take a few days to approve.',
+      'MMS and concatenated (long) messages are billed at higher rates by Twilio.',
+    ],
+  },
+  {
+    channel: 'email',
+    name: 'Email',
+    provider: 'IMAP/SMTP or Gmail / Microsoft 365 (OAuth)',
+    status: 'not-connected',
+    blurb: 'Turn a support mailbox into tracked, threaded email tickets.',
+    inbound: 'New mail to your support address is ingested (IMAP poll or inbound-parse webhook) → a ticket is created and replies are threaded by Message-ID.',
+    outbound: 'CSRs reply from the inbox → CSxIQ sends via SMTP/API from your support address, preserving the subject and References headers so it threads correctly in the member’s client.',
+    prerequisites: [
+      'A dedicated support mailbox (e.g. support@lakesidecu.org)',
+      'Either OAuth access (Gmail / Microsoft 365) or IMAP + SMTP credentials',
+      'SPF, DKIM, and DMARC configured on the sending domain for deliverability',
+    ],
+    howItWorks: [
+      { title: 'Connect the mailbox', detail: 'Authorize with Gmail/Microsoft via OAuth, or enter IMAP (read) and SMTP (send) host, port, and credentials.' },
+      { title: 'Ingest inbound mail', detail: 'CSxIQ watches the inbox (IMAP IDLE/poll) or receives an inbound-parse webhook, and turns each new message into a ticket.' },
+      { title: 'Authenticate the domain', detail: 'Add SPF/DKIM records and a DMARC policy so replies land in the inbox, not spam.' },
+      { title: 'Preserve threading', detail: 'Outbound replies keep the original subject and set In-Reply-To / References headers so the conversation stays one thread.' },
+      { title: 'Go live', detail: 'Members email support as usual; CSRs reply in full email format from the omnichannel inbox.' },
+    ],
+    fields: [
+      { label: 'Support address', placeholder: 'support@lakesidecu.org' },
+      { label: 'IMAP host', placeholder: 'imap.gmail.com:993' },
+      { label: 'SMTP host', placeholder: 'smtp.gmail.com:587' },
+      { label: 'Mailbox password / app password', placeholder: '••••••••••••', secret: true },
+    ],
+    webhookUrl: 'https://api.csxiq.app/webhooks/email/lakeside-cu',
+    notes: [
+      'OAuth (Gmail/Microsoft) avoids storing mailbox passwords and is recommended.',
+      'Without DKIM/DMARC, replies are likely to be marked as spam.',
+    ],
+  },
+]
 
 // ─── History (full interaction trail) ─────────────────────────────────
 // Every message and call, tagged by status + sentiment. Any item still

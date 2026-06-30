@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ShieldCheck, LayoutGrid, Users, BookOpen, ArrowUpRight } from 'lucide-react'
+import { ShieldCheck, LayoutGrid, Users, Plug, BookOpen, ArrowUpRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const nav = [
   { label: 'Overview', href: '/admin', icon: LayoutGrid },
   { label: 'Customer Support Reps', href: '/admin/csrs', icon: Users },
+  { label: 'Integrations', href: '/admin/integrations', icon: Plug },
   { label: 'Knowledge Base', href: '/csxiq/knowledge', icon: BookOpen, external: true },
 ]
 
